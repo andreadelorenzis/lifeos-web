@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import TodoList from './TodoList.vue';
+import HabitList from './HabitList.vue';
+import GoalList from './GoalList.vue';
+import PomodoroTimer from './PomodoroTimer.vue';
 import { ListChecks } from 'lucide-vue-next';
 import { CheckCircle } from 'lucide-vue-next';
 import { Target } from 'lucide-vue-next';
@@ -52,6 +55,20 @@ const categories = ref([
       >
         <div v-if="category.id === 1">
           <TodoList />
+        </div>
+        <div v-if="category.id === 2">
+          <HabitList />
+        </div>
+        <div v-if="category.id === 3">
+          <PomodoroTimer />
+        </div>
+        <div v-if="category.id === 4">
+          <GoalList />
+        </div>
+        <div v-if="category.id === 5">
+          <div class="text-center py-12">
+            <p class="text-neutral-500">Coming soon...</p>
+          </div>
         </div>
       </TabPanel>
     </TabPanels>
