@@ -1,26 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Star, Trash2, Edit2 } from 'lucide-vue-next';
-
-interface Goal {
-  id: number;
-  name: string;
-  description: string;
-  unitOfMeasure: string;
-  targetQty: number;
-  currentProgress: number;
-  deadline: Date;
-  difficulty: number; // 1-5
-  importance: number; // 1-5
-  reason: string;
-  reward: string;
-  punishment: string;
-  status: 'Active' | 'Completed' | 'Failed' | 'Paused';
-  createdAt: Date;
-}
+import { type Goal as GoalType } from '@/services/GoalService';
 
 interface Props {
-  goal: Goal;
+  goal: GoalType;
 }
 
 interface Emits {
@@ -33,7 +17,13 @@ const props = defineProps<Props>();
 const emit = defineEmits<EmitEvents>();
 
 const progressPercentage = computed(() => {
-  return Math.round((props.goal.currentProgress / props.goal.targetQty) * 100);
+  const value = Math.round((props.goal.currentProgress / props.goal.targetQuantity) * 100);
+  console.log('Calculating progress percentage:', {
+    currentProgress: props.goal.currentProgress,
+    targetQty: props.goal.targetQuantity,
+    calculatedValue: value,
+  });
+  return value;
 });
 
 const isOverdue = computed(() => {
@@ -61,6 +51,11 @@ const renderStars = (count: number) => {
 interface EmitEvents {
   edit: [];
   delete: [];
+}
+
+const formatDate = (dateStr: string | Date) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString();
 }
 
 </script>
@@ -131,7 +126,7 @@ interface EmitEvents {
     <div class="space-y-2">
       <div class="flex justify-between text-sm">
         <span class="text-neutral-500">
-          Progress: {{ goal.currentProgress }} / {{ goal.targetQty }} {{ goal.unitOfMeasure }}
+          Progress: {{ goal.currentProgress }} / {{ goal.targetQuantity }} {{ goal.unitOfMeasure }}
         </span>
         <span class="font-semibold text-neutral-900">{{ progressPercentage }}%</span>
       </div>
@@ -147,7 +142,7 @@ interface EmitEvents {
     <div class="grid grid-cols-2 gap-4 text-sm">
       <div>
         <p class="text-neutral-500 mb-1">Deadline</p>
-        <p class="font-medium text-neutral-900">{{ goal.deadline.toLocaleDateString() }}</p>
+        <p class="font-medium text-neutral-900">{{ formatDate(goal.deadline) }}</p>
       </div>
       <div>
         <p class="text-neutral-500 mb-1">Time Remaining</p>

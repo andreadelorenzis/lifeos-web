@@ -1,31 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Modal from './Modal.vue';
 import GoalCard from './GoalCard.vue';
 import { Plus, Goal } from 'lucide-vue-next';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
+import GoalService, { type Goal as GoalType } from '@/services/GoalService';
 
-interface Goal {
-  id: number;
-  name: string;
-  description: string;
-  unitOfMeasure: string;
-  targetQty: number;
-  currentProgress: number;
-  deadline: Date;
-  difficulty: number;
-  importance: number;
-  reason: string;
-  reward: string;
-  punishment: string;
-  status: 'Active' | 'Completed' | 'Failed' | 'Paused';
-  createdAt: Date;
-}
-
-const goals = ref<Goal[]>([]);
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
 const editingId = ref<number | null>(null);
-const nextId = ref(1);
 
 // Form fields
 const goalName = ref('');
@@ -43,6 +26,20 @@ const goalStatus = ref<'Active' | 'Completed' | 'Failed' | 'Paused'>('Active');
 
 const statuses: Array<'Active' | 'Completed' | 'Failed' | 'Paused'> = ['Active', 'Completed', 'Failed', 'Paused'];
 
+const queryClient = useQueryClient();
+
+// Fetch goals using TanStack Query
+const { isPending, isError, data, error } = useQuery({
+  queryKey: ['goals'],
+  queryFn: async () => {
+    const { data } = await GoalService.getGoals();
+    return data;
+  }
+});
+
+// Computed property for goals array
+const goals = computed<GoalType[]>(() => data.value || []);
+
 const resetForm = () => {
   goalName.value = '';
   goalDescription.value = '';
@@ -58,16 +55,16 @@ const resetForm = () => {
   goalStatus.value = 'Active';
 };
 
-const openModal = (goal?: Goal) => {
+const openModal = (goal?: GoalType) => {
   if (goal) {
     isEditMode.value = true;
     editingId.value = goal.id;
     goalName.value = goal.name;
     goalDescription.value = goal.description;
     goalUnit.value = goal.unitOfMeasure;
-    goalTarget.value = goal.targetQty;
+    goalTarget.value = goal.targetQuantity;
     goalProgress.value = goal.currentProgress;
-    goalDeadline.value = goal.deadline.toISOString().split('T')[0] || '';
+    goalDeadline.value = (goal.deadline instanceof Date ? goal.deadline.toISOString().split('T')[0] : String(goal.deadline).split('T')[0]) || '';
     goalDifficulty.value = goal.difficulty;
     goalImportance.value = goal.importance;
     goalReason.value = goal.reason;
@@ -87,67 +84,79 @@ const closeModal = () => {
   resetForm();
 };
 
+const createGoalMutation = useMutation({
+  mutationFn: (newGoal: Omit<GoalType, 'id' | 'createdAt'>) => GoalService.createGoal(newGoal),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['goals'] });
+    closeModal();
+  }
+});
+
+const updateGoalMutation = useMutation({
+  mutationFn: ({ id, goal }: { id: number; goal: Partial<GoalType> }) => GoalService.updateGoal(id, goal),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['goals'] });
+    closeModal();
+  }
+});
+
+const deleteGoalMutation = useMutation({
+  mutationFn: (id: number) => GoalService.deleteGoal(id),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['goals'] });
+  }
+});
+
 const saveGoal = () => {
   if (!goalName.value.trim() || !goalUnit.value.trim() || !goalDeadline.value) {
     return;
   }
 
-  if (isEditMode.value && editingId.value) {
-    const index = goals.value.findIndex(g => g.id === editingId.value);
-    if (index !== -1) {
-      const existingGoal = goals.value[index];
-      if (existingGoal) {
-          goals.value[index] = {
-            id: existingGoal.id,
-            createdAt: existingGoal.createdAt,
-            name: goalName.value,
-            description: goalDescription.value,
-            unitOfMeasure: goalUnit.value,
-            targetQty: goalTarget.value,
-            currentProgress: goalProgress.value,
-            deadline: new Date(goalDeadline.value),
-            difficulty: goalDifficulty.value,
-            importance: goalImportance.value,
-            reason: goalReason.value,
-            reward: goalReward.value,
-            punishment: goalPunishment.value,
-            status: goalStatus.value,
-          };
-      }
-    }
-  } else {
-    goals.value.push({
-      id: nextId.value++,
-      name: goalName.value,
-      description: goalDescription.value,
-      unitOfMeasure: goalUnit.value,
-      targetQty: goalTarget.value,
-      currentProgress: goalProgress.value,
-      deadline: new Date(goalDeadline.value),
-      difficulty: goalDifficulty.value,
-      importance: goalImportance.value,
-      reason: goalReason.value,
-      reward: goalReward.value,
-      punishment: goalPunishment.value,
-      status: goalStatus.value,
-      createdAt: new Date(),
-    });
-  }
+  const goalData = {
+    name: goalName.value,
+    description: goalDescription.value,
+    unitOfMeasure: goalUnit.value,
+    targetQuantity: goalTarget.value,
+    currentProgress: goalProgress.value,
+    deadline: new Date(goalDeadline.value),
+    difficulty: goalDifficulty.value,
+    importance: goalImportance.value,
+    reason: goalReason.value,
+    reward: goalReward.value,
+    punishment: goalPunishment.value,
+    status: goalStatus.value
+  };
 
-  closeModal();
+  if (isEditMode.value && editingId.value) {
+    updateGoalMutation.mutate({ id: editingId.value, goal: goalData });
+  } else {
+    createGoalMutation.mutate({ ...goalData, createdAt: new Date() } as Omit<GoalType, 'id'>);
+  }
 };
 
 const deleteGoal = (id: number) => {
   if (confirm('Are you sure you want to delete this goal?')) {
-    goals.value = goals.value.filter(goal => goal.id !== id);
+    deleteGoalMutation.mutate(id);
   }
 };
+
+console.log('deleteGoalMutation.isError:', deleteGoalMutation.isError.value);
 </script>
+
 
 <template>
   <div class="space-y-4 p-4">
     <!-- Header with Toggle Button -->
     <h1 class="text-neutral-900">My Goals</h1>
+    
+    <!-- Delete Error Alert -->
+    
+    <div v-if="deleteGoalMutation.isError.value" class="p-3 bg-red-50 border border-red-200 rounded-md">
+      <p class="text-red-700 text-sm font-medium">
+        {{ (deleteGoalMutation.error as any)?.response?.data?.message || (deleteGoalMutation.error as any)?.message || 'Failed to delete goal' }}
+      </p>
+    </div>
+
     <button
     @click="openModal()"
     class="flex ml-auto items-center gap-2 px-4 py-2 bg-primary-bg text-primary-text font-medium rounded-md hover:bg-primary-bg-hover transition-colors"
@@ -160,6 +169,13 @@ const deleteGoal = (id: number) => {
     <!-- Modal with Goal Form -->
     <Modal :is-open="isModalOpen" :title="isEditMode ? 'Edit Goal' : 'Create New Goal'" @close="closeModal">
       <div class="space-y-4 max-h-[70vh] overflow-y-auto">
+        <!-- Error Message -->
+        <div v-if="createGoalMutation.isError.value || updateGoalMutation.isError.value" class="p-3 bg-red-50 border border-red-200 rounded-md">
+          <p class="text-red-700 text-sm font-medium">
+            {{ ((createGoalMutation.error || updateGoalMutation.error) as any)?.response?.data?.message || ((createGoalMutation.error || updateGoalMutation.error) as any)?.message || 'An error occurred' }}
+          </p>
+        </div>
+
         <!-- Name -->
         <div>
           <label for="goalName" class="block text-sm font-medium text-neutral-900 mb-1">
@@ -342,15 +358,24 @@ const deleteGoal = (id: number) => {
         <!-- Submit Button -->
         <button
           @click="saveGoal"
-          class="w-full px-4 py-2 bg-primary-bg text-primary-text font-medium rounded-md hover:bg-primary-bg-hover transition-colors"
+          :disabled="createGoalMutation.isPending.value || updateGoalMutation.isPending.value"
+          class="w-full px-4 py-2 bg-primary-bg text-primary-text font-medium rounded-md hover:bg-primary-bg-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {{ isEditMode ? 'Update Goal' : 'Create Goal' }}
+          {{ createGoalMutation.isPending.value || updateGoalMutation.isPending.value ? 'Saving...' : (isEditMode ? 'Update Goal' : 'Create Goal') }}
         </button>
       </div>
     </Modal>
 
     <!-- Goals Grid -->
-    <div v-if="goals.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div v-if="isPending" class="text-center py-12">
+      <p class="text-neutral-500">Loading goals...</p>
+    </div>
+
+    <div v-else-if="isError" class="text-center py-12">
+      <p class="text-red-500">Error loading goals: {{ error?.message }}</p>
+    </div>
+
+    <div v-else-if="goals.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <GoalCard
         v-for="goal in goals"
         :key="goal.id"
