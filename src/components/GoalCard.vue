@@ -27,7 +27,7 @@ const progressPercentage = computed(() => {
 });
 
 const isOverdue = computed(() => {
-  return new Date() > props.goal.deadline && props.goal.status === 'Active';
+  return new Date() > new Date(props.goal.deadline) && props.goal.statusName.toLowerCase() === 'active';
 });
 
 const daysRemaining = computed(() => {
@@ -37,7 +37,7 @@ const daysRemaining = computed(() => {
   return Math.ceil(diff / (1000 * 3600 * 24));
 });
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   Active: 'bg-blue-100 text-blue-700',
   Completed: 'bg-green-100 text-green-700',
   Failed: 'bg-red-100 text-red-700',
@@ -88,8 +88,8 @@ const formatDate = (dateStr: string | Date) => {
 
     <!-- Status Badge -->
     <div class="flex gap-2 flex-wrap">
-      <span :class="['px-3 py-1 rounded-full text-xs font-semibold', statusColors[goal.status]]">
-        {{ goal.status }}
+      <span :class="['px-3 py-1 rounded-full text-xs font-semibold', statusColors[goal.statusName.charAt(0).toUpperCase() + goal.statusName.slice(1)] || 'bg-gray-100 text-gray-700']">
+        {{ goal.statusName.charAt(0).toUpperCase() + goal.statusName.slice(1) }}
       </span>
       <span v-if="isOverdue" class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
         Overdue
@@ -126,7 +126,7 @@ const formatDate = (dateStr: string | Date) => {
     <div class="space-y-2">
       <div class="flex justify-between text-sm">
         <span class="text-neutral-500">
-          Progress: {{ goal.currentProgress }} / {{ goal.targetQuantity }} {{ goal.unitOfMeasure }}
+          Progress: {{ goal.currentProgress }} / {{ goal.targetQuantity }} {{ goal.unitCode }}
         </span>
         <span class="font-semibold text-neutral-900">{{ progressPercentage }}%</span>
       </div>

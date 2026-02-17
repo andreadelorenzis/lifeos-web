@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import TodoList from './components/TodoList.vue';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import Tabs from './components/Tabs.vue';
 

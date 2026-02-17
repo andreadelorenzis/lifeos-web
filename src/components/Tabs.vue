@@ -1,22 +1,19 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import TodoList from './TodoList.vue';
-import HabitList from './HabitList.vue';
+import TaskList from './TaskList.vue';
 import GoalList from './GoalList.vue';
 import PomodoroTimer from './PomodoroTimer.vue';
 import { ListChecks } from 'lucide-vue-next';
-import { CheckCircle } from 'lucide-vue-next';
 import { Target } from 'lucide-vue-next';
 import { Flag } from 'lucide-vue-next';
 import { Rocket } from 'lucide-vue-next';
 
 const categories = ref([
-    {name: 'To-Dos', id: 1, icon: ListChecks},
-    {name: 'Habits', id: 2, icon: CheckCircle},
-    {name: 'Focus', id: 3, icon: Target},
-    {name: 'Goals', id: 4, icon: Flag},
-    {name: 'Boost', id: 5, icon: Rocket},
+    {name: 'Tasks', id: 1, icon: ListChecks},
+    {name: 'Focus', id: 2, icon: Target},
+    {name: 'Goals', id: 3, icon: Flag},
+    {name: 'Boost', id: 4, icon: Rocket},
 ])
 </script>
 
@@ -54,18 +51,15 @@ const categories = ref([
         ]"
       >
         <div v-if="category.id === 1">
-          <TodoList />
+          <TaskList />
         </div>
         <div v-if="category.id === 2">
-          <HabitList />
-        </div>
-        <div v-if="category.id === 3">
           <PomodoroTimer />
         </div>
-        <div v-if="category.id === 4">
+        <div v-if="category.id === 3">
           <GoalList />
         </div>
-        <div v-if="category.id === 5">
+        <div v-if="category.id === 4">
           <div class="text-center py-12">
             <p class="text-neutral-500">Coming soon...</p>
           </div>
