@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import Tabs from './components/Tabs.vue';
+import ToastContainer from './components/ToastContainer.vue';
 
 
 const isDark = ref(false);
@@ -12,8 +12,8 @@ const toggleDark = () => {
 </script>
 
 <template>
-    <div :class="{ dark: isDark }" class="bg-surface-bg">
-        <div class="min-h-screen flex items-center justify-center">
+    <div :class="[{ dark: isDark }]" class="bg-surface-bg app-container">
+        <div class="min-h-screen flex justify-center">
             <div class="w-full max-w-md px-2 py-16 sm:px-0">
               <Tabs />
               <button class="theme-toggle" @click="toggleDark">
@@ -21,11 +21,12 @@ const toggleDark = () => {
               </button>
             </div>
         </div>
+        <ToastContainer position="top-left" />
     </div>
 </template>
 
 <style scoped>
-div {
+.app-container {
   position: relative;
   min-height: 100vh;
 }

@@ -13,6 +13,14 @@
   --color-surface-bg: #ffffff;
   --color-surface-border: #f5f5f5;
 
+  /* Badge & Checkbox Colors */
+  --color-badge-bg: #f3f4f6;
+  /* neutral-100 */
+  --color-badge-text: #1f2937;
+
+  --color-checkbox-checked: #ef4444;
+  --color-checkbox-unchecked: #ffffff;
+
   /* Danger Colors */
   --color-danger-bg: #ef4444;
   --color-danger-text: #ffffff;
@@ -45,6 +53,14 @@
   --color-surface-bg: #111111;
   --color-surface-border: #262626;
 
+  /* Badge & Checkbox Colors */
+  --color-badge-bg: #262626;
+  /* neutral-800 */
+  --color-badge-text: #d4d4d8;
+  /* neutral-300 */
+  --color-checkbox-checked: #ef4444;
+  --color-checkbox-unchecked: #262626;
+
   /* Danger Colors */
   --color-danger-bg: #ef4444;
   --color-danger-text: #ffffff;
@@ -61,15 +77,20 @@
    ============================== */
 @theme {
   /* ===== COLORS ===== */
-  
+
   /* Semantic Colors (using CSS variables) */
   --color-primary-bg: var(--color-primary-bg);
   --color-primary-bg-hover: var(--color-primary-bg-hover);
   --color-primary-text: var(--color-primary-text);
-  
+
   --color-surface-bg: var(--color-surface-bg);
   --color-surface-border: var(--color-surface-border);
-  
+
+  --color-badge-bg: var(--color-badge-bg);
+  --color-badge-text: var(--color-badge-text);
+  --color-checkbox-checked: var(--color-checkbox-checked);
+  --color-checkbox-unchecked: var(--color-checkbox-unchecked);
+
   --color-danger-bg: var(--color-danger-bg);
   --color-danger-text: var(--color-danger-text);
 
@@ -86,7 +107,7 @@
   --color-red-500: var(--color-red-500);
 
   /* ===== TYPOGRAPHY ===== */
-  
+
   /* Font Families */
   --font-family-base: Inter, system-ui, sans-serif;
   --font-family-mono: JetBrains Mono, monospace;
@@ -135,8 +156,8 @@
   --border-width-thick: 2px;
 
   /* ===== SHADOW ===== */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   /* ===== MOTION ===== */
   --duration-fast: 150ms;

@@ -3,9 +3,10 @@ import { ref, computed } from 'vue';
 import Modal from './Modal.vue';
 import GoalCard from './GoalCard.vue';
 import GoalForm from './GoalForm.vue';
-import { Plus, Goal } from 'lucide-vue-next';
+import { Plus, Goal, ChevronDown, ChevronRight, ArchiveX } from 'lucide-vue-next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import GoalService, { type Goal as GoalType } from '@/services/GoalService';
+import { taskModalStore } from '@/stores/TaskModalStore';
 
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
@@ -24,6 +25,20 @@ const { isPending, isError, data, error } = useQuery({
 
 // Computed property for goals array
 const goals = computed<GoalType[]>(() => data.value || []);
+
+const activeGoals = computed(() => 
+  goals.value.filter(g => g.statusName.toLowerCase() === 'active' || g.statusName.toLowerCase() === 'paused')
+);
+
+const inactiveGoals = computed(() => 
+  goals.value.filter(g => g.statusName.toLowerCase() !== 'active'&& g.statusName.toLowerCase() !== 'paused')
+);
+
+const isInactiveExpanded = ref(false);
+
+const toggleInactive = () => {
+  isInactiveExpanded.value = !isInactiveExpanded.value;
+};
 
 const openModal = (goal?: GoalType) => {
   if (goal) {
@@ -77,6 +92,10 @@ const deleteGoal = (id: number) => {
     deleteGoalMutation.mutate(id);
   }
 };
+
+const handleDecompose = (id: number) => {
+    taskModalStore.openModal(id);
+};
 </script>
 
 <template>
@@ -126,14 +145,45 @@ const deleteGoal = (id: number) => {
       <p class="text-red-500">Error loading goals: {{ error?.message }}</p>
     </div>
 
-    <div v-else-if="goals.length > 0" class="grid grid-cols-1 gap-4">
-      <GoalCard
-        v-for="goal in goals"
-        :key="goal.id"
-        :goal="goal"
-        @edit="openModal(goal)"
-        @delete="deleteGoal(goal.id)"
-      />
+    <div v-else-if="goals.length > 0" class="space-y-6">
+      
+      <!-- Active Goals -->
+      <div v-if="activeGoals.length > 0" class="grid grid-cols-1 gap-4">
+        <GoalCard
+          v-for="goal in activeGoals"
+          :key="goal.id"
+          :goal="goal"
+          @edit="openModal(goal)"
+          @delete="deleteGoal(goal.id)"
+          @decompose="handleDecompose(goal.id)"
+        />
+      </div>
+      <div v-else-if="inactiveGoals.length > 0" class="text-center py-8 text-neutral-400 italic">
+        No active goals. Time to start something new!
+      </div>
+
+      <!-- Inactive (Completed, Failed, Paused) Section -->
+      <div v-if="inactiveGoals.length > 0" class="border-t border-surface-border pt-4 mt-2">
+        <button 
+          @click="toggleInactive"
+          class="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 font-medium transition-colors mb-4"
+        >
+          <component :is="isInactiveExpanded ? ChevronDown : ChevronRight" :size="20" />
+          <ArchiveX :size="18" class="text-neutral-500" />
+          <span>Past Goals ({{ inactiveGoals.length }})</span>
+        </button>
+
+        <div v-show="isInactiveExpanded" class="grid grid-cols-1 gap-4 pl-2 opacity-80">
+          <GoalCard
+            v-for="goal in inactiveGoals"
+            :key="goal.id"
+            :goal="goal"
+            @edit="openModal(goal)"
+            @delete="deleteGoal(goal.id)"
+            @decompose="handleDecompose(goal.id)"
+          />
+        </div>
+      </div>
     </div>
 
     <!-- Empty State -->

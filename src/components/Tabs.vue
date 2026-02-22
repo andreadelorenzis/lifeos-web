@@ -8,6 +8,8 @@ import { ListChecks } from 'lucide-vue-next';
 import { Target } from 'lucide-vue-next';
 import { Flag } from 'lucide-vue-next';
 import { Rocket } from 'lucide-vue-next';
+import { taskModalStore } from '@/stores/TaskModalStore';
+import { watch } from 'vue';
 
 const categories = ref([
     {name: 'Tasks', id: 1, icon: ListChecks},
@@ -15,10 +17,19 @@ const categories = ref([
     {name: 'Goals', id: 3, icon: Flag},
     {name: 'Boost', id: 4, icon: Rocket},
 ])
+
+const selectedIndex = ref(0);
+
+// If the modal opens from GoalCard, automatically navigate to the tasks tab
+watch(() => taskModalStore.state.value.isOpen, (isOpen) => {
+    if (isOpen) {
+        selectedIndex.value = 0;
+    }
+});
 </script>
 
 <template>
-  <TabGroup>
+  <TabGroup :selectedIndex="selectedIndex" @change="selectedIndex = $event">
     <TabList class="flex p-1 space-x-1 rounded-xl bg-surface-bg border border-surface-border rounded-radius-sm">
         <Tab
         v-for="category in categories"

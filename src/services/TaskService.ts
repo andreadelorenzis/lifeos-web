@@ -8,12 +8,14 @@ export interface Task {
   frequencyName: string;
   goalId?: number;
   goalName?: string;
-  goalUnit?: string;
+  goalUnitCode?: string;
+  goalUnitName?: string;
   completedAt?: string | null;
   createdAt: string;
   updatedAt?: string;
   deletedAt?: string | null;
   quantity?: number;
+  progress?: number;
 }
 
 export interface CreateTaskDTO {
@@ -22,6 +24,11 @@ export interface CreateTaskDTO {
   frequencyId: number;
   goalId?: number;
   quantity?: number;
+  progress?: number;
+}
+
+export interface TaskProgressUpdateDTO {
+  quantity: number;
 }
 
 const TaskService = {
@@ -51,6 +58,10 @@ const TaskService = {
 
   uncompleteTask(id: number): Promise<{ data: Task }> {
     return apiClient.post(`/tasks/${id}/uncomplete`);
+  },
+
+  addTaskProgress(id: number, data: TaskProgressUpdateDTO): Promise<{ data: Task }> {
+    return apiClient.post(`/tasks/${id}/progress`, data);
   }
 };
 

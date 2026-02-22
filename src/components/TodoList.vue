@@ -34,7 +34,7 @@ const completedTodos = computed(() => tasks.value.filter(t => t.completedAt))
 const createTaskMutation = useMutation({
   mutationFn: (text: string) => TaskService.createTask({
     name: text,
-    isHabit: false
+    frequencyId: 1
   }),
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['tasks'] })

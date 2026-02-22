@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from 'lucide-vue-next';
-import { onBeforeUnmount } from 'vue';
+import TaskService, { type Task } from '@/services/TaskService';
+import { useToast } from '@/composables/useToast';
+import { useQuery, useQueryClient } from '@tanstack/vue-query';
 
 type TimerMode = 'work' | 'break';
 
@@ -22,7 +24,100 @@ const remainingSeconds = ref(totalSeconds.value);
 const sessionsCompleted = ref(0);
 const soundEnabled = ref(true);
 
+const { success: successToast, error: errorToast } = useToast();
+
+const selectedTaskId = ref<number | ''>('');
+
 let intervalId: number | null = null;
+let retryIntervalId: number | null = null;
+
+// Query
+const { data: rawTasks } = useQuery({
+  queryKey: ['tasks'],
+  queryFn: async () => {
+    const { data } = await TaskService.getTasks();
+    return data;
+  }
+});
+
+const availableTasks = computed(() => {
+  if (!rawTasks.value) return [];
+  
+  return rawTasks.value.filter(
+    (task) => 
+      !task.completedAt && 
+      task.goalUnitCode === 't'
+  );
+});
+
+const handleSessionComplete = async () => {
+  if (mode.value === 'work' && selectedTaskId.value) {
+    const taskId = selectedTaskId.value as number;
+    const workSeconds = config.value.workDuration * 60;
+    
+    try {
+      await TaskService.addTaskProgress(taskId, { quantity: workSeconds });
+      successToast(`Added ${config.value.workDuration} minutes to your task!`);
+      // Invalidating queries will trigger background refetch
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    } catch (err) {
+      console.error('Failed to update task progress', err);
+      errorToast('Failed to sync progress. It will be retried later.');
+      saveFailedProgressUpdate(taskId, workSeconds);
+    }
+  }
+};
+
+interface FailedUpdate {
+  taskId: number;
+  quantity: number;
+  timestamp: number;
+}
+
+const saveFailedProgressUpdate = (taskId: number, quantity: number) => {
+  const existingStr = localStorage.getItem('pomodoro_failed_updates');
+  const updates: FailedUpdate[] = existingStr ? JSON.parse(existingStr) : [];
+  updates.push({
+    taskId,
+    quantity,
+    timestamp: Date.now()
+  });
+  localStorage.setItem('pomodoro_failed_updates', JSON.stringify(updates));
+};
+
+const queryClient = useQueryClient();
+
+const retryFailedUpdates = async () => {
+  const existingStr = localStorage.getItem('pomodoro_failed_updates');
+  if (!existingStr) return;
+  
+  const updates: FailedUpdate[] = JSON.parse(existingStr);
+  if (updates.length === 0) return;
+  
+  const remainingUpdates: FailedUpdate[] = [];
+  let successfulRetries = 0;
+  
+  for (const update of updates) {
+    try {
+      await TaskService.addTaskProgress(update.taskId, { quantity: update.quantity });
+      successfulRetries++;
+    } catch (err) {
+      remainingUpdates.push(update);
+    }
+  }
+  
+  if (remainingUpdates.length > 0) {
+    localStorage.setItem('pomodoro_failed_updates', JSON.stringify(remainingUpdates));
+  } else {
+    localStorage.removeItem('pomodoro_failed_updates');
+  }
+  
+  if (successfulRetries > 0) {
+    successToast(`Successfully synced ${successfulRetries} offline sessions.`);
+    queryClient.invalidateQueries({ queryKey: ['tasks'] });
+  }
+};
+
 
 const minutes = computed(() => Math.floor(remainingSeconds.value / 60));
 const seconds = computed(() => remainingSeconds.value % 60);
@@ -63,8 +158,6 @@ const switchMode = () => {
   mode.value = mode.value === 'work' ? 'break' : 'work';
   totalSeconds.value = (mode.value === 'work' ? config.value.workDuration : config.value.breakDuration) * 60;
   remainingSeconds.value = totalSeconds.value;
-  // isRunning.value = false;
-  // if (intervalId) clearInterval(intervalId);
 };
 
 const toggleTimer = () => {
@@ -73,7 +166,7 @@ const toggleTimer = () => {
     if (intervalId) clearInterval(intervalId);
   } else {
     isRunning.value = true;
-    intervalId = window.setInterval(() => {
+    intervalId = window.setInterval(async () => {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
       } else {
@@ -82,11 +175,10 @@ const toggleTimer = () => {
         if (mode.value === 'work') {
           sessionsCompleted.value++;
           switchMode();
+          await handleSessionComplete();
         } else {
           switchMode();
         }
-        //isRunning.value = false;
-        // if (intervalId) clearInterval(intervalId);
       }
     }, 1000);
   }
@@ -117,8 +209,15 @@ const updateBreakDuration = (value: number) => {
   }
 };
 
+onMounted(() => {
+  retryFailedUpdates();
+  // retry every minute
+  retryIntervalId = window.setInterval(retryFailedUpdates, 60000);
+});
+
 onBeforeUnmount(() => {
   if (intervalId) clearInterval(intervalId);
+  if (retryIntervalId) clearInterval(retryIntervalId);
 });
 
 </script>
@@ -203,9 +302,36 @@ onBeforeUnmount(() => {
       <p class="text-3xl font-bold" style="color: var(--color-neutral-900);">{{ sessionsCompleted }}</p>
     </div>
 
-    <!-- Settings -->
+    <!-- Settings & Task Selection -->
     <div class="space-y-4 bg-surface-bg rounded-lg p-6 border border-surface-border">
-      <div>
+      
+      <!-- Task Select -->
+      <div v-if="availableTasks.length > 0">
+        <label class="block text-sm font-medium mb-2" style="color: var(--color-neutral-900);">
+          Link to Task
+        </label>
+        <select 
+          v-model="selectedTaskId"
+          :disabled="isRunning"
+          class="w-full p-2 border border-surface-border rounded-md bg-surface-bg"
+          style="color: var(--color-neutral-900);"
+        >
+          <option value="">No task selected</option>
+          <option 
+            v-for="task in availableTasks" 
+            :key="task.id" 
+            :value="task.id"
+          >
+            {{ task.name }} ({{ task.goalUnitName }})
+          </option>
+        </select>
+        <p class="text-xs mt-1" style="color: var(--color-neutral-500);">
+          Only active tasks with the 'Time' unit attached are shown.
+        </p>
+      </div>
+
+      <!-- Durations -->
+      <div class="pt-2 border-t border-surface-border">
         <label class="block text-sm font-medium mb-2" style="color: var(--color-neutral-900);">
           Work Duration: {{ config.workDuration }} min
         </label>

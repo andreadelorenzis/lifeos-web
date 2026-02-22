@@ -8,6 +8,7 @@ export interface Goal {
   unitName?: string;
   targetQuantity: number;
   currentProgress: number;
+  idealProgress?: number;
   deadline: Date | string;
   difficulty: number;
   importance: number;
@@ -39,6 +40,7 @@ const GoalService = {
   deleteGoal(id: number): Promise<void> {
     return apiClient.delete(`/goals/${id}`);
   }
+
 };
 
 export default GoalService;

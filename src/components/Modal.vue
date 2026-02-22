@@ -12,7 +12,7 @@ interface Emits {
 }
 
 defineProps<Props>();
-defineEmits<Emits>();
+const emit = defineEmits<Emits>();
 
 const modalRef = ref<HTMLDivElement>();
 
@@ -23,7 +23,7 @@ const handleBackdropClick = (e: MouseEvent) => {
 };
 
 const closeModal = () => {
-  // Emit close event - parent component will handle closing
+  emit('close');
 };
 </script>
 
@@ -32,7 +32,7 @@ const closeModal = () => {
       <div
         v-if="isOpen"
         ref="modalRef"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
         @click="handleBackdropClick"
       >
         <div
@@ -45,7 +45,7 @@ const closeModal = () => {
               {{ title }}
             </h2>
             <button
-              @click="$emit('close')"
+              @click="closeModal"
               class="absolute top-4 right-4 text-neutral-500 hover:text-neutral-900 transition-colors"
             >
               <X :size="24" />

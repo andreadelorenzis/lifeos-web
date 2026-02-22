@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import UnitService from '@/services/UnitService';
 import type { Goal } from '@/services/GoalService';
+import DurationPicker from './DurationPicker.vue';
 
 const props = defineProps<{
   initialGoal?: Goal | null;
@@ -80,6 +81,7 @@ watch(() => props.initialGoal, (newGoal) => {
     goalUnit.value = newGoal.unitCode || '';
     goalTarget.value = newGoal.targetQuantity;
     goalProgress.value = newGoal.currentProgress;
+    
     goalDeadline.value = (newGoal.deadline instanceof Date ? newGoal.deadline.toISOString().split('T')[0] : String(newGoal.deadline).split('T')[0]) || '';
     goalDifficulty.value = newGoal.difficulty;
     goalImportance.value = newGoal.importance;
@@ -97,12 +99,15 @@ const submitForm = () => {
     return;
   }
 
+  let finalTarget = goalTarget.value;
+  let finalProgress = goalProgress.value;
+
   const goalData = {
     name: goalName.value,
     description: goalDescription.value,
     unitCode: goalUnit.value,
-    targetQuantity: goalTarget.value,
-    currentProgress: goalProgress.value,
+    targetQuantity: finalTarget,
+    currentProgress: finalProgress,
     deadline: new Date(goalDeadline.value),
     difficulty: goalDifficulty.value,
     importance: goalImportance.value,
@@ -163,38 +168,57 @@ const submitForm = () => {
           </option>
         </select>
       </div>
-      <div>
-        <label for="goalTarget" class="block text-sm font-medium text-neutral-900 mb-1">
-          Target Quantity *
-        </label>
-        <input
-          id="goalTarget"
-          v-model.number="goalTarget"
-          type="number"
-          min="0"
-          placeholder="0"
-          class="w-full px-3 py-2 border border-surface-border bg-surface-bg text-neutral-900 placeholder-neutral-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-bg"
-        />
+      
+      <!-- General Target/Progress -->
+      <div v-if="goalUnit !== 't'" class="space-y-4">
+        <div>
+          <label for="goalTarget" class="block text-sm font-medium text-neutral-900 mb-1">
+            Target Quantity *
+          </label>
+          <input
+            id="goalTarget"
+            v-model.number="goalTarget"
+            type="number"
+            min="0"
+            placeholder="0"
+            class="w-full px-3 py-2 border border-surface-border bg-surface-bg text-neutral-900 placeholder-neutral-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-bg"
+          />
+        </div>
+
+        <!-- Current Progress -->
+        <div>
+          <label for="goalProgress" class="block text-sm font-medium text-neutral-900 mb-1">
+            Current Progress
+          </label>
+          <input
+            id="goalProgress"
+            v-model.number="goalProgress"
+            type="number"
+            min="0"
+            :max="goalTarget"
+            placeholder="0"
+            class="w-full px-3 py-2 border border-surface-border bg-surface-bg text-neutral-900 placeholder-neutral-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-bg"
+          />
+          <p class="text-xs text-neutral-500 mt-1">
+            {{ Math.round((goalProgress / goalTarget) * 100) || 0 }}% progress
+          </p>
+        </div>
       </div>
     </div>
 
-    <!-- Current Progress -->
-    <div>
-      <label for="goalProgress" class="block text-sm font-medium text-neutral-900 mb-1">
-        Current Progress
-      </label>
-      <input
-        id="goalProgress"
-        v-model.number="goalProgress"
-        type="number"
-        min="0"
-        :max="goalTarget"
-        placeholder="0"
-        class="w-full px-3 py-2 border border-surface-border bg-surface-bg text-neutral-900 placeholder-neutral-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-bg"
-      />
-      <p class="text-xs text-neutral-500 mt-1">
-        {{ Math.round((goalProgress / goalTarget) * 100) || 0 }}% progress
-      </p>
+    <!-- Time-based Target/Progress -->
+    <div v-if="goalUnit === 't'" class="grid grid-cols-1 gap-4 border-t border-surface-border pt-4">
+      <!-- Target -->
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-2">Target Time</label>
+        <DurationPicker v-model="goalTarget" />
+      </div>
+
+      <!-- Progress -->
+      <div>
+        <label class="block text-sm font-medium text-neutral-900 mb-2">Current Progress</label>
+        <DurationPicker v-model="goalProgress" />
+      </div>
     </div>
 
     <!-- Deadline -->
