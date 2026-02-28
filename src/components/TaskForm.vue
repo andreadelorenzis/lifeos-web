@@ -6,6 +6,9 @@ import GoalService from '@/services/GoalService'
 import FrequencyService from '@/services/FrequencyService'
 import DecompositionService from '@/services/DecompositionService'
 import DurationPicker from './DurationPicker.vue'
+import WeekDayPicker from './WeekDayPicker.vue'
+import MonthDayPicker from './MonthDayPicker.vue'
+import YearDayPicker from './YearDayPicker.vue'
 
 const props = defineProps<{
   initialTask?: Task | null;
@@ -27,6 +30,7 @@ const taskFrequencyId = ref(5) // Default to 'one-time'
 const taskGoalId = ref<number | undefined>(undefined)
 const taskQuantity = ref<number | undefined>(undefined)
 const taskProgress = ref<number | undefined>(undefined)
+const selectedDays = ref<number[]>([])
 
 // Decomposition State
 const proposedQuantity = ref<number | null>(null)
@@ -46,6 +50,7 @@ watch(() => props.initialTask, (task) => {
     taskGoalId.value = task.goalId || undefined
     taskQuantity.value = task.quantity || undefined
     taskProgress.value = task.progress || undefined
+    selectedDays.value = task.selectedDays || []
   } else {
     resetForm()
   }
@@ -70,6 +75,16 @@ const { data: frequenciesData } = useQuery({
 
 const frequencies = computed(() => frequenciesData.value || [])
 
+const selectedFrequencyName = computed(() => {
+  const f = frequencies.value.find((f: any) => f.id === taskFrequencyId.value);
+  return f ? f.name.toLowerCase() : '';
+})
+
+// Clear selected days if frequency changes
+watch(taskFrequencyId, () => {
+  selectedDays.value = []
+})
+
 // Fetch Goals
 const { data: goalsData } = useQuery({
   queryKey: ['goals'],
@@ -93,6 +108,7 @@ function resetForm() {
   taskGoalId.value = undefined
   taskQuantity.value = undefined
   taskProgress.value = undefined
+  selectedDays.value = []
   proposedQuantity.value = null
   decompositionFeasible.value = null
   suggestedDeadline.value = null
@@ -187,7 +203,7 @@ const submitForm = () => {
       goalId: taskGoalId.value,
       quantity: finalQuantity,
       progress: finalProgress,
-      // Pass decomposition suggestions back to the parent to handle
+      selectedDays: selectedDays.value,
       applyDeadlineExtension: applyDeadlineExtension.value,
       suggestedDeadline: suggestedDeadline.value
   };
@@ -242,6 +258,16 @@ const submitForm = () => {
             {{ freq.name.charAt(0).toUpperCase() + freq.name.slice(1) }}
           </option>
         </select>
+      </div>
+
+      <!-- Recurring Pickers conditionally rendered based on selected frequency -->
+      <div v-if="['weekly', 'monthly', 'yearly'].includes(selectedFrequencyName)" class="col-span-2">
+        <label class="block text-sm font-medium text-neutral-900 mb-2">
+          Recurring Days *
+        </label>
+        <WeekDayPicker v-if="selectedFrequencyName === 'weekly'" v-model="selectedDays" />
+        <MonthDayPicker v-else-if="selectedFrequencyName === 'monthly'" v-model="selectedDays" />
+        <YearDayPicker v-else-if="selectedFrequencyName === 'yearly'" v-model="selectedDays" />
       </div>
 
       <!-- Goal -->

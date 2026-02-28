@@ -12,6 +12,7 @@ interface EmitEvents {
   toggle: [];
   edit: [];
   delete: [];
+  toggleUrgent: [];
   updateProgress: [delta: number];
 }
 
@@ -55,9 +56,19 @@ const handleUpdateProgress = (isIncrease: boolean) => {
 
 <template>
   <div 
-    class="task-card bg-surface-bg border border-surface-border rounded-lg p-4 transition-all duration-200"
-    :class="{ 'opacity-60': isCompleted(task) }"
+    class="task-card bg-surface-bg border rounded-lg p-4 transition-all duration-200 relative overflow-hidden"
+    :class="{ 
+        'opacity-60': isCompleted(task),
+        'border-red-300 dark:border-red-900/50': task.urgent && !isCompleted(task),
+        'border-surface-border': !task.urgent || isCompleted(task)
+    }"
   >
+    <!-- Urgent vertical indicator -->
+    <div 
+      v-if="task.urgent && !isCompleted(task)" 
+      class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500"
+    ></div>
+
     <div class="flex items-start gap-4">
       <!-- Checkbox -->
       <div class="pt-1">
@@ -94,7 +105,23 @@ const handleUpdateProgress = (isIncrease: boolean) => {
             {{ task.name }}
           </h4>
           
-          <div class="flex gap-1 ml-2">
+          <div class="flex gap-1 ml-2 items-center">
+            
+            <button
+              v-if="!isCompleted(task)"
+              @click="emit('toggleUrgent')"
+              class="transition-colors mx-1"
+              :class="task.urgent ? 'text-red-500 hover:text-red-600' : 'text-neutral-400 hover:text-red-500'"
+              :disabled="isPending"
+              :title="task.urgent ? 'Remove urgency' : 'Set to urgent'"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" x2="12" y1="8" y2="12"/>
+                <line x1="12" x2="12.01" y1="16" y2="16"/>
+              </svg>
+            </button>
+
             <button
               @click="emit('edit')"
               class="text-neutral-400 hover:text-blue-500 transition-colors"

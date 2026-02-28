@@ -10,12 +10,15 @@ export interface Task {
   goalName?: string;
   goalUnitCode?: string;
   goalUnitName?: string;
+  taskOrder: number;
   completedAt?: string | null;
   createdAt: string;
   updatedAt?: string;
   deletedAt?: string | null;
   quantity?: number;
   progress?: number;
+  selectedDays?: number[];
+  urgent: boolean;
 }
 
 export interface CreateTaskDTO {
@@ -25,6 +28,8 @@ export interface CreateTaskDTO {
   goalId?: number;
   quantity?: number;
   progress?: number;
+  selectedDays?: number[];
+  urgent?: boolean;
 }
 
 export interface TaskProgressUpdateDTO {
@@ -32,12 +37,26 @@ export interface TaskProgressUpdateDTO {
 }
 
 const TaskService = {
-  getTasks(): Promise<{ data: Task[] }> {
-    return apiClient.get('/tasks');
+  getTasks(frequencyId?: number): Promise<{ data: Task[] }> {
+    const params = new URLSearchParams();
+    if (frequencyId !== undefined) {
+      params.append('frequencyId', frequencyId.toString());
+    }
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return apiClient.get(`/tasks${queryString}`);
   },
 
   getTask(id: number): Promise<{ data: Task }> {
     return apiClient.get(`/tasks/${id}`);
+  },
+
+  getTasksDueToday(includeOneTimeTasks?: boolean): Promise<{ data: Task[] }> {
+    const params = new URLSearchParams();
+    if (includeOneTimeTasks !== undefined) {
+      params.append('includeOneTimeTasks', includeOneTimeTasks.toString());
+    }
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return apiClient.get(`/tasks/due-today${queryString}`);
   },
 
   createTask(task: CreateTaskDTO): Promise<{ data: Task }> {
@@ -62,6 +81,12 @@ const TaskService = {
 
   addTaskProgress(id: number, data: TaskProgressUpdateDTO): Promise<{ data: Task }> {
     return apiClient.post(`/tasks/${id}/progress`, data);
+  },
+
+  setTaskUrgency(id: number, urgent: boolean): Promise<{ data: Task }> {
+    const params = new URLSearchParams();
+    params.append('urgent', urgent.toString());
+    return apiClient.patch(`/tasks/${id}/urgent?${params.toString()}`);
   }
 };
 

@@ -21,22 +21,28 @@ const isCompletedExpanded = ref(false)
 
 // Query
 const { isPending, isError, data, error } = useQuery({
-  queryKey: ['tasks'],
+  queryKey: ['tasks', 'due-today'],
   queryFn: async () => {
-    const { data } = await TaskService.getTasks()
+    const { data } = await TaskService.getTasksDueToday(true)
     return data
   }
 })
 
+
 // Computed Properties
 const tasks = computed(() => data.value || [])
 
+
+const combinedTasks = computed(() => {
+  return tasks.value;
+});
+
 const activeTasks = computed(() => 
-  tasks.value.filter(task => !task.completedAt)
+  combinedTasks.value.filter(task => !task.completedAt)
 )
 
 const completedTasks = computed(() => 
-  tasks.value.filter(task => task.completedAt)
+  combinedTasks.value.filter(task => task.completedAt)
 )
 
 // Mutations
@@ -53,10 +59,9 @@ const toggleTaskMutation = useMutation({
     await queryClient.cancelQueries({ queryKey: ['tasks'] })
 
     // Snapshot the previous value
-    const previousTasks = queryClient.getQueryData(['tasks'])
+    const previousDueTasks = queryClient.getQueryData(['tasks', 'due-today'])
 
-    // Optimistically update to the new value
-    queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
+    const updateFn = (old: Task[] | undefined) => {
       if (!old) return []
 
       return old.map(t => {
@@ -76,14 +81,17 @@ const toggleTaskMutation = useMutation({
         }
         return t
       })
-    })
+    }
+
+    // Optimistically update to the new value
+    queryClient.setQueryData(['tasks', 'due-today'], updateFn)
 
     // Return a context object with the snapshotted value
-    return { previousTasks }
+    return { previousDueTasks }
   },
   onError: (err, newTask, context: any) => {
-    if (context?.previousTasks) {
-      queryClient.setQueryData(['tasks'], context.previousTasks)
+    if (context?.previousDueTasks) {
+      queryClient.setQueryData(['tasks', 'due-today'], context.previousDueTasks)
     }
     toastError('Failed to update task')
   },
@@ -138,15 +146,52 @@ const deleteTaskMutation = useMutation({
   }
 })
 
+const toggleUrgentMutation = useMutation({
+  mutationFn: (task: Task) => TaskService.setTaskUrgency(task.id, !task.urgent),
+  onMutate: async (task: Task) => {
+    await queryClient.cancelQueries({ queryKey: ['tasks'] })
+    const previousDueTasks = queryClient.getQueryData(['tasks', 'due-today'])
+
+    const updateFn = (old: Task[] | undefined) => {
+      if (!old) return []
+      const updatedTasks = old.map(t => t.id === task.id ? { ...t, urgent: !t.urgent } : t)
+      
+      // Stably sort to keep relative order, just moving urgent tasks to the top
+      return updatedTasks.sort((a, b) => {
+        if (a.urgent && !b.urgent) return -1;
+        if (!a.urgent && b.urgent) return 1;
+
+        // 2. Sort by Task Order (provided by backend)
+        const orderA = a.taskOrder ?? 9999;
+        const orderB = b.taskOrder ?? 9999;
+        return orderA - orderB;
+      });
+    }
+
+    queryClient.setQueryData(['tasks', 'due-today'], updateFn)
+
+    return { previousDueTasks }
+  },
+  onError: (err, newTask, context: any) => {
+    if (context?.previousDueTasks) {
+      queryClient.setQueryData(['tasks', 'due-today'], context.previousDueTasks)
+    }
+    toastError('Failed to update task urgency')
+  },
+  onSettled: () => {
+    queryClient.invalidateQueries({ queryKey: ['tasks'] })
+  }
+})
+
 const updateProgressMutation = useMutation({
   mutationFn: ({ task, delta }: { task: Task; delta: number }) => {
     return TaskService.addTaskProgress(task.id, { quantity: delta });
   },
   onMutate: async ({ task, delta }) => {
     await queryClient.cancelQueries({ queryKey: ['tasks'] })
-    const previousTasks = queryClient.getQueryData(['tasks'])
+    const previousDueTasks = queryClient.getQueryData(['tasks', 'due-today'])
     
-    queryClient.setQueryData(['tasks'], (old: Task[] | undefined) => {
+    const updateFn = (old: Task[] | undefined) => {
       if (!old) return []
       return old.map(t => {
         if (t.id === task.id) {
@@ -156,12 +201,15 @@ const updateProgressMutation = useMutation({
         }
         return t
       })
-    })
-    return { previousTasks }
+    }
+
+    queryClient.setQueryData(['tasks', 'due-today'], updateFn)
+
+    return { previousDueTasks }
   },
   onError: (err, variables, context: any) => {
-    if (context?.previousTasks) {
-      queryClient.setQueryData(['tasks'], context.previousTasks)
+    if (context?.previousDueTasks) {
+      queryClient.setQueryData(['tasks', 'due-today'], context.previousDueTasks)
     }
     toastError('Failed to update progress')
   },
@@ -202,6 +250,10 @@ watch(() => taskModalStore.state.value.isOpen, (isOpen) => {
 
 function handleToggle(task: Task) {
   toggleTaskMutation.mutate(task)
+}
+
+function handleToggleUrgent(task: Task) {
+  toggleUrgentMutation.mutate(task)
 }
 
 function handleDelete(id: number) {
@@ -254,7 +306,7 @@ function toggleCompleted() {
       <button
         @click="() => openModal()"
         class="flex items-center gap-2 px-4 py-2 bg-primary-bg text-primary-text font-medium rounded-md hover:bg-primary-bg-hover transition-colors"
-        v-if="tasks.length !== 0"
+        v-if="combinedTasks.length !== 0"
       >
         <Plus :size="18" />
         Add Task
@@ -272,7 +324,7 @@ function toggleCompleted() {
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="tasks.length === 0" class="text-center py-12">
+    <div v-else-if="combinedTasks.length === 0" class="text-center py-12">
       <div class="space-y-4">
         <div class="text-4xl"><CalendarCheck :size="48" class="mx-auto text-neutral-300" /></div>
         <p class="text-neutral-500 text-lg">No tasks yet. Create one to get started!</p>
@@ -289,12 +341,14 @@ function toggleCompleted() {
     <div v-else>
       <!-- Active Task List -->
       <div class="space-y-3 mb-8">
+        <h2 class="text-neutral-700 font-semibold mb-3">All tasks for today</h2>
           <TaskCard
             v-for="task in activeTasks"
             :key="task.id"
             :task="task"
-            :is-pending="toggleTaskMutation.isPending.value || deleteTaskMutation.isPending.value || updateProgressMutation.isPending.value"
+            :is-pending="toggleTaskMutation.isPending.value || deleteTaskMutation.isPending.value || updateProgressMutation.isPending.value || toggleUrgentMutation.isPending.value"
             @toggle="handleToggle(task)"
+            @toggleUrgent="handleToggleUrgent(task)"
             @edit="openModal(task)"
             @delete="handleDelete(task.id)"
             @updateProgress="handleUpdateProgress(task, $event)"
@@ -320,8 +374,9 @@ function toggleCompleted() {
             v-for="task in completedTasks"
             :key="task.id"
             :task="task"
-            :is-pending="toggleTaskMutation.isPending.value || deleteTaskMutation.isPending.value || updateProgressMutation.isPending.value"
+            :is-pending="toggleTaskMutation.isPending.value || deleteTaskMutation.isPending.value || updateProgressMutation.isPending.value || toggleUrgentMutation.isPending.value"
             @toggle="handleToggle(task)"
+            @toggleUrgent="handleToggleUrgent(task)"
             @edit="openModal(task)"
             @delete="handleDelete(task.id)"
             @updateProgress="handleUpdateProgress(task, $event)"
