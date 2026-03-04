@@ -1,28 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import Tabs from './components/Tabs.vue';
-import ToastContainer from './components/ToastContainer.vue';
+import { ref } from "vue";
+import Tabs from "./components/Tabs.vue";
+import ToastContainer from "./components/ToastContainer.vue";
+import { useTheme } from "./composables/useTheme";
 
-
-const isDark = ref(false);
-
-const toggleDark = () => {
-  isDark.value = !isDark.value;
-};
+const { isDark, toggleDark } = useTheme();
 </script>
 
 <template>
-    <div :class="[{ dark: isDark }]" class="bg-surface-bg app-container">
-        <div class="min-h-screen flex justify-center">
-            <div class="w-full max-w-md px-2 py-16 sm:px-0">
-              <Tabs />
-              <button class="theme-toggle" @click="toggleDark">
-                {{ isDark ? '☀️' : '🌙' }}
-              </button>
-            </div>
-        </div>
-        <ToastContainer position="top-left" />
+  <div :class="[{ dark: isDark }]" class="bg-surface-bg app-container">
+    <div class="min-h-screen flex justify-center">
+      <div class="w-full max-w-lg px-2 py-16 sm:px-0">
+        <Tabs />
+        <button class="theme-toggle" @click="toggleDark">
+          {{ isDark ? "☀️" : "🌙" }}
+        </button>
+      </div>
     </div>
+    <ToastContainer position="top-left" />
+  </div>
 </template>
 
 <style scoped>

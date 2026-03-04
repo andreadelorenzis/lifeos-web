@@ -38,6 +38,20 @@
 
   /* Red Palette */
   --color-red-500: #ef4444;
+
+  /* Graph Colors - Light Theme Defaults */
+  --graph-line: #2563eb;
+  --graph-ideal-line: #f87171;
+  --graph-grid: #e5e7eb;
+  --graph-bg: transparent;
+  --graph-text: currentColor;
+
+  --heatmap-color-0: #ebedf0;
+  --heatmap-color-1: #c6e48b;
+  --heatmap-color-2: #7bc96f;
+  --heatmap-color-3: #239a3b;
+  --heatmap-color-4: #196127;
+  --heatmap-hover: #ffffffcc;
 }
 
 /* ==============================
@@ -70,6 +84,20 @@
   --color-neutral-100: #1a1a1a;
   --color-neutral-500: #a3a3a3;
   --color-neutral-900: #ffffff;
+
+  /* Graph Colors - Dark Theme */
+  --graph-line: #3b82f6;
+  --graph-ideal-line: #f87171;
+  --graph-grid: #374151;
+  --graph-bg: #111827;
+  --graph-text: #f9fafb;
+
+  --heatmap-color-0: #161b22;
+  --heatmap-color-1: #0e4429;
+  --heatmap-color-2: #006d32;
+  --heatmap-color-3: #26a641;
+  --heatmap-color-4: #39d353;
+  --heatmap-hover: #ffffffcc;
 }
 
 /* ==============================

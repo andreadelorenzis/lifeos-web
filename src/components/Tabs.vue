@@ -1,66 +1,65 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import TaskList from './TaskList.vue';
-import GoalList from './GoalList.vue';
-import PomodoroTimer from './PomodoroTimer.vue';
-import { ListChecks } from 'lucide-vue-next';
-import { Target } from 'lucide-vue-next';
-import { Flag } from 'lucide-vue-next';
-import { Rocket } from 'lucide-vue-next';
-import { taskModalStore } from '@/stores/TaskModalStore';
-import { watch } from 'vue';
+import { ref } from "vue";
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
+import TaskList from "./TaskList.vue";
+import GoalList from "./GoalList.vue";
+import PomodoroTimer from "./PomodoroTimer.vue";
+import { ListChecks } from "lucide-vue-next";
+import { Target, Flag, LineChart } from "lucide-vue-next";
+import { taskModalStore } from "@/stores/TaskModalStore";
+import { watch } from "vue";
+import Dashboard from "./Dashboard.vue";
 
 const categories = ref([
-    {name: 'Tasks', id: 1, icon: ListChecks},
-    {name: 'Focus', id: 2, icon: Target},
-    {name: 'Goals', id: 3, icon: Flag},
-    {name: 'Boost', id: 4, icon: Rocket},
-])
+  { name: "Tasks", id: 1, icon: ListChecks },
+  { name: "Focus", id: 2, icon: Target },
+  { name: "Goals", id: 3, icon: Flag },
+  { name: "Dashboard", id: 4, icon: LineChart },
+]);
 
 const selectedIndex = ref(0);
 
 // If the modal opens from GoalCard, automatically navigate to the tasks tab
-watch(() => taskModalStore.state.value.isOpen, (isOpen) => {
+watch(
+  () => taskModalStore.state.value.isOpen,
+  (isOpen) => {
     if (isOpen) {
-        selectedIndex.value = 0;
+      selectedIndex.value = 0;
     }
-});
+  },
+);
 </script>
 
 <template>
   <TabGroup :selectedIndex="selectedIndex" @change="selectedIndex = $event">
-    <TabList class="flex p-1 space-x-1 rounded-xl bg-surface-bg border border-surface-border rounded-radius-sm">
-        <Tab
+    <TabList
+      class="flex p-1 space-x-1 rounded-xl bg-surface-bg border border-surface-border rounded-radius-sm"
+    >
+      <Tab
         v-for="category in categories"
         as="template"
         :key="category.id"
         v-slot="{ selected }"
+      >
+        <button
+          :class="[
+            'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+            selected
+              ? 'bg-primary-bg text-primary-text hover:bg-primary-bg-hover'
+              : 'text-neutral-900 hover:bg-neutral-100',
+            'px-spacing-4 py-spacing-3 font-font-weight-medium text-font-size-sm transition-colors duration-fast cursor-pointer',
+          ]"
         >
-            <button
-                :class="[
-                'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                selected
-                    ? 'bg-primary-bg text-primary-text hover:bg-primary-bg-hover'
-                    : 'text-neutral-900 hover:bg-neutral-100',
-                'px-spacing-4 py-spacing-3 font-font-weight-medium text-font-size-sm transition-colors duration-fast cursor-pointer'
-                ]"
-            >
-                <div class="flex flex-col items-center gap-1">
-                    <component :is="category.icon" :size="18" />
-                    {{ category.name }}
-                </div>
-            </button>
-        </Tab>
+          <div class="flex flex-col items-center gap-1">
+            <component :is="category.icon" :size="18" />
+            {{ category.name }}
+          </div>
+        </button>
+      </Tab>
     </TabList>
 
     <TabPanels class="mt-2 bg-surface-bg">
-      <TabPanel
-        v-for="category in categories"
-        :key="category.id"
-        :class="[
-        ]"
-      >
+      <TabPanel v-for="category in categories" :key="category.id" :class="[]">
         <div v-if="category.id === 1">
           <TaskList />
         </div>
@@ -71,9 +70,7 @@ watch(() => taskModalStore.state.value.isOpen, (isOpen) => {
           <GoalList />
         </div>
         <div v-if="category.id === 4">
-          <div class="text-center py-12">
-            <p class="text-neutral-500">Coming soon...</p>
-          </div>
+          <Dashboard />
         </div>
       </TabPanel>
     </TabPanels>
