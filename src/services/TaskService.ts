@@ -1,4 +1,4 @@
-import apiClient from '../api/client';
+import apiClient from "../api/client";
 
 export interface Task {
   id: number;
@@ -40,9 +40,9 @@ const TaskService = {
   getTasks(frequencyId?: number): Promise<{ data: Task[] }> {
     const params = new URLSearchParams();
     if (frequencyId !== undefined) {
-      params.append('frequencyId', frequencyId.toString());
+      params.append("frequencyId", frequencyId.toString());
     }
-    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const queryString = params.toString() ? `?${params.toString()}` : "";
     return apiClient.get(`/tasks${queryString}`);
   },
 
@@ -53,17 +53,20 @@ const TaskService = {
   getTasksDueToday(includeOneTimeTasks?: boolean): Promise<{ data: Task[] }> {
     const params = new URLSearchParams();
     if (includeOneTimeTasks !== undefined) {
-      params.append('includeOneTimeTasks', includeOneTimeTasks.toString());
+      params.append("includeOneTimeTasks", includeOneTimeTasks.toString());
     }
-    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const queryString = params.toString() ? `?${params.toString()}` : "";
     return apiClient.get(`/tasks/due-today${queryString}`);
   },
 
   createTask(task: CreateTaskDTO): Promise<{ data: Task }> {
-    return apiClient.post('/tasks', task);
+    return apiClient.post("/tasks", task);
   },
 
-  updateTask(id: number, task: Partial<CreateTaskDTO>): Promise<{ data: Task }> {
+  updateTask(
+    id: number,
+    task: Partial<CreateTaskDTO>,
+  ): Promise<{ data: Task }> {
     return apiClient.put(`/tasks/${id}`, task);
   },
 
@@ -79,15 +82,26 @@ const TaskService = {
     return apiClient.post(`/tasks/${id}/uncomplete`);
   },
 
-  addTaskProgress(id: number, data: TaskProgressUpdateDTO): Promise<{ data: Task }> {
+  addTaskProgress(
+    id: number,
+    data: TaskProgressUpdateDTO,
+  ): Promise<{ data: Task }> {
     return apiClient.post(`/tasks/${id}/progress`, data);
   },
 
   setTaskUrgency(id: number, urgent: boolean): Promise<{ data: Task }> {
     const params = new URLSearchParams();
-    params.append('urgent', urgent.toString());
+    params.append("urgent", urgent.toString());
     return apiClient.patch(`/tasks/${id}/urgent?${params.toString()}`);
-  }
+  },
+
+  getTaskCompletions(
+    year: number,
+  ): Promise<{ data: { date: string; count: number }[] }> {
+    const params = new URLSearchParams();
+    params.append("year", year.toString());
+    return apiClient.get(`/tasks/completions?${params.toString()}`);
+  },
 };
 
 export default TaskService;

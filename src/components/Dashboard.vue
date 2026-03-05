@@ -1,30 +1,27 @@
 <script setup lang="ts">
 import { useTheme } from "@/composables/useTheme";
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { BurndownChart, CalendarHeatmap } from "vue-viz";
+import TaskService from "@/services/TaskService";
 import "vue-viz/style.css";
 
 const { isDark } = useTheme();
 
-function generateYearData() {
-  const start = new Date("2026-01-01");
-  const end = new Date("2026-12-31");
-  const dates = [];
+const heatmapCalendarData = ref<{ date: string; value: number }[]>([]);
 
-  let current = new Date(start);
-
-  while (current <= end) {
-    dates.push({
-      date: current.toISOString().slice(0, 10),
-      value: Math.floor(Math.random() * 10),
-    });
-    current.setDate(current.getDate() + 1);
+onMounted(async () => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const response = await TaskService.getTaskCompletions(currentYear);
+    // map count -> value for the heatmap
+    heatmapCalendarData.value = response.data.map((item) => ({
+      date: item.date,
+      value: item.count,
+    }));
+  } catch (err) {
+    console.error("Failed to load task completions", err);
   }
-
-  return dates;
-}
-
-const heatmapCalendarData = generateYearData();
+});
 
 const burndownData = [
   { day: "Day 1", value: 50 },
@@ -80,6 +77,7 @@ const heatmapColors = computed(() => {
       <CalendarHeatmap
         class="mb-6"
         :data="heatmapCalendarData"
+        :year="2026"
         v-bind="heatmapColors"
       />
     </div>
