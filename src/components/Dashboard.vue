@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useTheme } from "@/composables/useTheme";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { BurndownChart, CalendarHeatmap } from "vue-viz";
 import TaskService from "@/services/TaskService";
+import GoalService from "@/services/GoalService";
+import { useQuery } from "@tanstack/vue-query";
+import { useToast } from "@/composables/useToast";
 import "vue-viz/style.css";
+
+const { error: toastError } = useToast();
 
 const { isDark } = useTheme();
 
@@ -23,37 +28,61 @@ onMounted(async () => {
   }
 });
 
-const burndownData = [
-  { day: "Day 1", value: 50 },
-  { day: "Day 2", value: 42 },
-  { day: "Day 3", value: 35 },
-  { day: "Day 4", value: 28 },
-  { day: "Day 5", value: 20 },
-  { day: "Day 6", value: 12 },
-  { day: "Day 7", value: 0 },
-];
+const selectedGoalId = ref<number | undefined>(undefined);
 
-const idealBurndownData = [
-  { day: "Day 1", value: 50 },
-  { day: "Day 2", value: 40 },
-  { day: "Day 3", value: 20 },
-  { day: "Day 4", value: 10 },
-  { day: "Day 5", value: 5 },
-  { day: "Day 6", value: 2 },
-  { day: "Day 7", value: 0 },
-];
+const { data: goals } = useQuery({
+  queryKey: ["goals"],
+  queryFn: async () => {
+    const { data } = await GoalService.getGoals();
+    if (data && data.length > 0 && !selectedGoalId.value) {
+      const firstGoal = data[0];
+      if (firstGoal) {
+        selectedGoalId.value = firstGoal.id;
+      }
+    }
+    return data;
+  },
+});
+
+const {
+  data: burndownDataResponse,
+  isError: isBurndownError,
+  isPending: isBurndownPending,
+} = useQuery({
+  queryKey: ["burndown", selectedGoalId],
+  queryFn: async () => {
+    const id = selectedGoalId.value;
+    if (!id) return null;
+    const { data } = await GoalService.getBurndownData(id);
+    return data;
+  },
+  enabled: computed(() => !!selectedGoalId.value),
+});
+
+watch(isBurndownError, (hasError) => {
+  if (hasError) toastError("Failed to fetch burndown data");
+});
+
+const burndownData = computed(() => {
+  if (!burndownDataResponse.value?.realBurndown) return [];
+  return burndownDataResponse.value.realBurndown;
+});
+
+const idealBurndownData = computed(() => {
+  if (!burndownDataResponse.value?.idealBurndown) return [];
+  return burndownDataResponse.value.idealBurndown;
+});
 
 const burndownColors = computed(() => ({
   lineColor: `var(--graph-line)`,
   idealLineColor: `var(--graph-ideal-line)`,
   gridColor: `var(--graph-grid)`,
-  backgroundColor: `var(--graph-bg)`,
+  backgroundColor: isDark.value ? "var(--heatmap-color-0)" : undefined,
   textColor: `var(--graph-text)`,
+  border: "1px solid var(--color-surface-border)",
 }));
 
 const heatmapColors = computed(() => {
-  if (!isDark.value) return {}; // light mode → use default
-
   return {
     colorScale: [
       "var(--heatmap-color-0)",
@@ -63,8 +92,9 @@ const heatmapColors = computed(() => {
       "var(--heatmap-color-4)",
     ],
     textColor: "var(--graph-text)",
-    backgroundColor: "var(--graph-bg)",
+    backgroundColor: "var(--color-surface-bg)",
     hoverColor: "var(--heatmap-hover)",
+    border: "1px solid var(--color-surface-border)",
   };
 });
 </script>
@@ -81,11 +111,26 @@ const heatmapColors = computed(() => {
         v-bind="heatmapColors"
       />
     </div>
-    <div>
-      <h2 class="text-neutral-700 font-medium text-lg mb-2">
-        Goal Burndown Chart
-      </h2>
+    <div v-if="goals && goals.length > 0">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-neutral-700 font-medium text-lg">
+          Goal Burndown Chart
+        </h2>
+        <select
+          v-model="selectedGoalId"
+          class="border border-surface-border rounded-md px-3 py-1.5 text-sm bg-surface-bg text-primary-text outline-none focus:ring-2 focus:ring-primary-bg"
+        >
+          <option v-for="goal in goals" :key="goal.id" :value="goal.id">
+            {{ goal.name }}
+          </option>
+        </select>
+      </div>
+
+      <div v-if="isBurndownPending" class="text-center py-12 text-neutral-500">
+        Loading burndown chart...
+      </div>
       <BurndownChart
+        v-else-if="burndownData.length > 0"
         :data="burndownData"
         :idealData="idealBurndownData"
         :lineColor="burndownColors.lineColor"
@@ -96,7 +141,11 @@ const heatmapColors = computed(() => {
         idealLineStyle="dotted"
         :backgroundColor="burndownColors.backgroundColor"
         :textColor="burndownColors.textColor"
+        :border="burndownColors.border"
       />
+      <div v-else class="text-center py-12 text-neutral-400 italic">
+        No burndown data available for this goal.
+      </div>
     </div>
   </div>
 </template>
