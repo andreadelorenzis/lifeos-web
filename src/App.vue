@@ -3,6 +3,7 @@ import { ref } from "vue";
 import Tabs from "./components/Tabs.vue";
 import ToastContainer from "./components/ToastContainer.vue";
 import { useTheme } from "./composables/useTheme";
+import GamificationSection from "./components/GamificationSection.vue";
 
 const { isDark, toggleDark } = useTheme();
 </script>
@@ -16,10 +17,10 @@ const { isDark, toggleDark } = useTheme();
       <div class="w-full max-w-lg px-2 py-16 sm:px-0">
         <Tabs />
       </div>
-    </div class="w-full max-w-lg px-2 py-16 sm:px-0">
+    </div>
 
     <div class="gamification-container">
-      
+      <GamificationSection />
     </div>
     <button class="theme-toggle" @click="toggleDark">
       {{ isDark ? "☀️" : "🌙" }}
@@ -36,13 +37,14 @@ const { isDark, toggleDark } = useTheme();
 
 .productivity-container {
   width: 50%;
+  min-width: 0;
   border-right: 2px solid var(--color-neutral-500);
   padding: 0 20px;
 }
 
 .gamification-container {
   width: 50%;
-  padding: 0 20px;
+  min-width: 0;
 }
 
 .theme-toggle {

@@ -1,0 +1,27 @@
+{
+  "frames": {
+    "chest_closed": {
+      "frame": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "chest_open": {
+      "frame": { "x": 32, "y": 0, "w": 32, "h": 32 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    }
+  },
+
+  "animations": {
+    "chest_opening": ["chest_closed", "chest_open"]
+  },
+
+  "meta": {
+    "image": "chest_common.png",
+    "format": "RGBA8888",
+    "size": { "w": 64, "h": 32 },
+    "scale": "1"
+  }
+}
