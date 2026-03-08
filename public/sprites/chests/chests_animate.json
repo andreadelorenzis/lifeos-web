@@ -1,0 +1,42 @@
+{
+  "frames": {
+    "chest_0_0": {
+      "frame": { "x": 7, "y": 0, "w": 18, "h": 25 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 25 },
+      "sourceSize": { "w": 18, "h": 25 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "chest_0_1": {
+      "frame": { "x": 7, "y": 32, "w": 18, "h": 25 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 25 },
+      "sourceSize": { "w": 18, "h": 25 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "chest_0_2": {
+      "frame": { "x": 7, "y": 64, "w": 18, "h": 25 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 25 },
+      "sourceSize": { "w": 18, "h": 25 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    },
+    "chest_0_3": {
+      "frame": { "x": 7, "y": 96, "w": 18, "h": 25 },
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 18, "h": 25 },
+      "sourceSize": { "w": 18, "h": 25 },
+      "anchor": { "x": 0.5, "y": 0.5 }
+    }
+  },
+  "animations": {
+    "chest_opening_column0": [
+      "chest_0_0",
+      "chest_0_1",
+      "chest_0_2",
+      "chest_0_3"
+    ]
+  },
+  "meta": {
+    "image": "chests_animate.png",
+    "format": "RGBA8888",
+    "size": { "w": 288, "h": 128 },
+    "scale": "1"
+  }
+}

@@ -10,7 +10,7 @@
 </style>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch, nextTick } from "vue";
+import { onMounted, onUnmounted, ref, shallowRef, watch, nextTick } from "vue";
 import {
   Application,
   Assets,
@@ -19,11 +19,15 @@ import {
   Graphics,
   Text,
   TextStyle,
+  Ticker,
+  AnimatedSprite,
 } from "pixi.js";
 import { useTheme } from "@/composables/useTheme";
+import { gsap } from "gsap/gsap-core";
 
 const gamification = ref<HTMLElement | undefined>(undefined);
-const appRef = ref<Application | undefined>(undefined);
+const appRef = shallowRef<Application | undefined>(undefined);
+const activeChestsCount = ref(4);
 
 const { isDark } = useTheme();
 
@@ -39,6 +43,136 @@ watch(isDark, async () => {
   if (appRef.value) updateBg(appRef.value);
 });
 
+const animateChest = (
+  app: Application,
+  chest: Sprite,
+  container: Container,
+  chestSheet: any,
+) => {
+  // Create dark overlay to cover everything and block clicks
+  const overlay = new Graphics();
+  overlay.rect(0, 0, app.screen.width, app.screen.height);
+  overlay.fill({ color: 0x000000, alpha: 0.7 });
+  overlay.interactive = true; // Blocks clicks
+  app.stage.addChild(overlay);
+
+  // We need the chest to be above the overlay, so we move it to the stage
+  const globalPos = chest.getGlobalPosition();
+  app.stage.addChild(chest);
+  chest.x = globalPos.x;
+  chest.y = globalPos.y;
+
+  const targetGlobal = { x: app.screen.width / 2, y: app.screen.height / 2 };
+
+  // Animate scale separately
+  gsap.to(chest.scale, {
+    x: 4,
+    y: 4,
+    duration: 1,
+    ease: "power2.inOut",
+  });
+
+  // Animate position
+  gsap.to(chest, {
+    x: targetGlobal.x,
+    y: targetGlobal.y,
+    duration: 1,
+    ease: "power2.inOut",
+    onComplete: () => {
+      // Start the chest opening animation
+      const textures = [
+        chestSheet.textures["chest_0_0"],
+        chestSheet.textures["chest_0_1"],
+        chestSheet.textures["chest_0_2"],
+        chestSheet.textures["chest_0_3"],
+      ];
+
+      const anim = new AnimatedSprite(textures);
+      anim.anchor.set(0.5);
+      anim.x = chest.x;
+      anim.y = chest.y;
+      anim.scale.set(chest.scale.x, chest.scale.y); // Keep the tweened scale
+      anim.animationSpeed = 0.15; // Set animation speed
+      anim.loop = false;
+
+      app.stage.addChild(anim);
+      chest.destroy(); // Destroy original sprite
+
+      anim.play();
+
+      anim.onComplete = () => {
+        // 1. Create the item coming out (small circle)
+        const item = new Graphics();
+        item.circle(0, 0, 25);
+        item.fill({ color: 0xffd700 }); // gold
+        item.x = anim.x;
+        item.y = anim.y + anim.height * 0.1; // start slightly low, inside the chest
+        item.scale.set(0); // scale up during animation
+        app.stage.addChild(item);
+
+        // 2. Create the front part of the chest (bottom ~35%)
+        const frontChest = new Sprite(chestSheet.textures["chest_0_3"]);
+        frontChest.anchor.set(0.5);
+        frontChest.x = anim.x;
+        frontChest.y = anim.y;
+        frontChest.scale.set(anim.scale.x, anim.scale.y);
+
+        // Mask for the front base
+        const mask = new Graphics();
+        const bottomHeight = frontChest.height * 0.35;
+        const startY = frontChest.y + frontChest.height / 2 - bottomHeight;
+        mask.rect(
+          frontChest.x - frontChest.width / 2,
+          startY,
+          frontChest.width,
+          bottomHeight,
+        );
+        mask.fill({ color: 0xffffff });
+
+        frontChest.mask = mask;
+        app.stage.addChild(frontChest);
+        app.stage.addChild(mask);
+
+        // 3. Animate the item popping out
+        gsap.to(item.scale, { x: 1, y: 1, duration: 1, ease: "back.out(1.5)" });
+        gsap.to(item, {
+          y: anim.y - anim.height / 2 - 40, // padding above top of chest
+          duration: 1,
+          ease: "back.out(1.5)",
+          onComplete: () => {
+            // Wait a bit, then fade out and cleanup
+            gsap.to([item, frontChest, anim], {
+              alpha: 0,
+              duration: 0.5,
+              delay: 1,
+              onComplete: () => {
+                overlay.destroy();
+                anim.destroy();
+                item.destroy();
+                frontChest.destroy();
+                mask.destroy();
+                activeChestsCount.value--;
+
+                // Rearrange remaining chests
+                const remainingChests = container.children as Sprite[];
+                const newSpacing =
+                  app.screen.width / (remainingChests.length + 1);
+                remainingChests.forEach((remainingChest, index) => {
+                  gsap.to(remainingChest, {
+                    x: newSpacing * (index + 1),
+                    duration: 0.3,
+                    ease: "power2.out",
+                  });
+                });
+              },
+            });
+          },
+        });
+      };
+    },
+  });
+};
+
 onMounted(async () => {
   if (!gamification.value) return;
 
@@ -46,17 +180,20 @@ onMounted(async () => {
   const app = new Application();
   appRef.value = app;
 
+  // Get background theme color
   const style = getComputedStyle(gamification.value);
   const color = style.getPropertyValue("--color-surface-bg").trim();
 
   // Initialize the application
   await app.init({ background: color, resizeTo: gamification.value });
 
+  app.stage.interactive = true;
+
   // Append the application canvas to the document body
   gamification.value?.append(app.canvas);
 
   // Load the textures
-  const chestSheet = await Assets.load("/sprites/chests/chest_common.json");
+  const chestSheet = await Assets.load("/sprites/chests/chests_animate.json");
   const avatarSheet = await Assets.load("/sprites/avatar/character.json");
 
   const buildUI = () => {
@@ -148,17 +285,28 @@ onMounted(async () => {
     bottomSection.y = screenHeight - 140; // place at bottom
     app.stage.addChild(bottomSection);
 
-    const chestCount = 4;
-    const spacing = screenWidth / (chestCount + 1);
+    const spacing = screenWidth / (activeChestsCount.value + 1);
 
-    for (let i = 0; i < chestCount; i++) {
-      const chest = new Sprite(chestSheet.textures["chest_closed"]);
+    for (let i = 0; i < activeChestsCount.value; i++) {
+      const chest = new Sprite(chestSheet.textures["chest_0_0"]);
       chest.anchor.set(0.5);
       // Distribute evenly
       chest.x = spacing * (i + 1);
       chest.y = 50;
-      chest.scale.set(2);
+      chest.scale.set(3);
       bottomSection.addChild(chest);
+
+      chest.interactive = true;
+
+      // Add click event
+      chest.on("pointerup", (event) => {
+        console.log("Clicked at:", event.global.x, event.global.y);
+        animateChest(app, chest, bottomSection, chestSheet);
+      });
+
+      chest.on("pointerover", (event) => {
+        console.log("Hovered at:", event.global.x, event.global.y);
+      });
     }
   };
 
