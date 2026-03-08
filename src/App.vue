@@ -8,15 +8,22 @@ const { isDark, toggleDark } = useTheme();
 </script>
 
 <template>
-  <div :class="[{ dark: isDark }]" class="bg-surface-bg app-container">
-    <div class="min-h-screen flex justify-center">
+  <div
+    :class="[{ dark: isDark }]"
+    class="flex justify-center bg-surface-bg app-container"
+  >
+    <div class="min-h-screen flex justify-center productivity-container">
       <div class="w-full max-w-lg px-2 py-16 sm:px-0">
         <Tabs />
-        <button class="theme-toggle" @click="toggleDark">
-          {{ isDark ? "☀️" : "🌙" }}
-        </button>
       </div>
+    </div class="w-full max-w-lg px-2 py-16 sm:px-0">
+
+    <div class="gamification-container">
+      
     </div>
+    <button class="theme-toggle" @click="toggleDark">
+      {{ isDark ? "☀️" : "🌙" }}
+    </button>
     <ToastContainer position="top-left" />
   </div>
 </template>
@@ -25,6 +32,17 @@ const { isDark, toggleDark } = useTheme();
 .app-container {
   position: relative;
   min-height: 100vh;
+}
+
+.productivity-container {
+  width: 50%;
+  border-right: 2px solid var(--color-neutral-500);
+  padding: 0 20px;
+}
+
+.gamification-container {
+  width: 50%;
+  padding: 0 20px;
 }
 
 .theme-toggle {

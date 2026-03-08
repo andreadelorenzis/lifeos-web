@@ -39,6 +39,15 @@ const GoalService = {
     return apiClient.get(`/goals/${id}`);
   },
 
+  getGoalsInInterval(
+    startDate: string,
+    endDate: string,
+  ): Promise<{ data: Goal[] }> {
+    return apiClient.get("/goals/interval", {
+      params: { startDate, endDate },
+    });
+  },
+
   createGoal(
     goal: Omit<Goal, "id" | "createdAt" | "unitName" | "statusName">,
   ): Promise<{ data: Goal }> {

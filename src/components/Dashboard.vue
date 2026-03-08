@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTheme } from "@/composables/useTheme";
 import { computed, onMounted, ref, watch } from "vue";
-import { BurndownChart, CalendarHeatmap } from "vue-viz";
+import { BurndownChart, CalendarHeatmap, FrappeGantt } from "vue-viz";
 import TaskService from "@/services/TaskService";
 import GoalService from "@/services/GoalService";
 import { useQuery } from "@tanstack/vue-query";
@@ -97,11 +97,92 @@ const heatmapColors = computed(() => {
     border: "1px solid var(--color-surface-border)",
   };
 });
+
+const ganttStartDate = new Date(
+  new Date().setFullYear(new Date().getFullYear() - 5),
+).toISOString();
+const ganttEndDate = new Date(
+  new Date().setFullYear(new Date().getFullYear() + 5),
+).toISOString();
+
+const { data: ganttGoals } = useQuery({
+  queryKey: ["ganttGoals"],
+  queryFn: async () => {
+    const { data } = await GoalService.getGoalsInInterval(
+      ganttStartDate,
+      ganttEndDate,
+    );
+    return data;
+  },
+});
+
+const tasks = computed(() => {
+  if (!ganttGoals.value) return [];
+  return ganttGoals.value.map((goal) => {
+    // protect against negative progress visually in the gantt
+    let progressPercentage = 0;
+    if (goal.targetQuantity > 0) {
+      progressPercentage = Math.max(
+        0,
+        Math.min(100, (goal.currentProgress / goal.targetQuantity) * 100),
+      );
+    }
+
+    // frappe-gantt expects YYYY-MM-DD
+    const start = (goal.createdAt ? new Date(goal.createdAt) : new Date())
+      .toISOString()
+      .split("T")[0];
+    const end = (goal.deadline ? new Date(goal.deadline) : new Date())
+      .toISOString()
+      .split("T")[0];
+
+    return {
+      id: String(goal.id),
+      name: goal.name,
+      start,
+      end,
+      progress: progressPercentage,
+    };
+  });
+});
+
+const handleDateChange = (task: any, start: Date, end: Date) => {
+  console.log("Date changed for task: ", task);
+  console.log("New range:", start, end);
+};
+
+const handleProgressChange = (task: any, progress: number) => {
+  console.log("Progress changed for task", task);
+  console.log("new progress: ", progress);
+};
+
+const handleViewChange = (mode: any) => {
+  console.log("View changed: ", mode);
+};
+
+const handleClick = (task: any) => {
+  console.log("Clicked task: ", task);
+};
 </script>
 
 <template>
   <div class="dashboard space-y-6 p-4">
     <h1 class="text-neutral-900 font-semibold text-xl">Dashboard</h1>
+    <div>
+      <h2 class="text-neutral-700 font-medium text-lg mb-2">Goal Gantt</h2>
+      <FrappeGantt
+        v-if="tasks.length > 0"
+        :tasks="tasks"
+        :options="{ view_mode: 'Month' }"
+        @taskClick="handleClick"
+        @dateChange="handleDateChange"
+        @progressChange="handleProgressChange"
+        @viewChange="handleViewChange"
+      />
+      <div v-else class="text-center py-12 text-neutral-400 italic">
+        No goals scheduled in this period.
+      </div>
+    </div>
     <div>
       <h2 class="text-neutral-700 font-medium text-lg mb-2">Yearly Activity</h2>
       <CalendarHeatmap

@@ -52,6 +52,31 @@
   --heatmap-color-3: #239a3b;
   --heatmap-color-4: #196127;
   --heatmap-hover: #ffffffcc;
+
+  /* Frappe Gantt Theme Overrides */
+  --g-header-background: var(--color-surface-bg);
+  --g-row-color: var(--color-surface-bg);
+  --g-row-border-color: var(--color-surface-border);
+  --g-border-color: var(--color-surface-border);
+
+  --g-tick-color: var(--color-surface-border);
+  --g-tick-color-thick: var(--color-neutral-500);
+
+  --g-text-dark: var(--color-neutral-900);
+  --g-text-light: var(--color-neutral-0);
+  --g-text-muted: var(--color-neutral-500);
+
+  --g-bar-color: var(--color-neutral-100);
+  --g-bar-border: var(--color-surface-border);
+  --g-progress-color: var(--color-primary-bg);
+
+  --g-arrow-color: var(--color-neutral-500);
+  --g-today-highlight: var(--color-danger-bg);
+  --g-weekend-highlight-color: var(--color-neutral-100);
+  --g-weekend-label-color: var(--color-neutral-500);
+
+  --g-actions-background: var(--color-surface-bg);
+  --g-popup-actions: var(--color-surface-bg);
 }
 
 /* ==============================
@@ -98,6 +123,31 @@
   --heatmap-color-3: #26a641;
   --heatmap-color-4: #39d353;
   --heatmap-hover: #ffffffcc;
+
+  /* Frappe Gantt Theme Overrides */
+  --g-header-background: var(--color-surface-bg);
+  --g-row-color: var(--color-surface-bg);
+  --g-row-border-color: var(--color-surface-border);
+  --g-border-color: var(--color-surface-border);
+
+  --g-tick-color: var(--color-surface-border);
+  --g-tick-color-thick: var(--color-neutral-500);
+
+  --g-text-dark: var(--color-neutral-900);
+  --g-text-light: var(--color-neutral-0);
+  --g-text-muted: var(--color-neutral-500);
+
+  --g-bar-color: var(--color-neutral-100);
+  --g-bar-border: var(--color-surface-border);
+  --g-progress-color: var(--color-primary-bg);
+
+  --g-arrow-color: var(--color-neutral-500);
+  --g-today-highlight: var(--color-danger-bg);
+  --g-weekend-highlight-color: var(--color-neutral-100);
+  --g-weekend-label-color: var(--color-neutral-500);
+
+  --g-actions-background: var(--color-surface-bg);
+  --g-popup-actions: var(--color-surface-bg);
 }
 
 /* ==============================
