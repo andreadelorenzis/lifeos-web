@@ -12,6 +12,10 @@
   /* Surface Colors */
   --color-surface-bg: #ffffff;
   --color-surface-border: #f5f5f5;
+  
+  /* Top Section Gamification Colors */
+  --color-top-section-bg: #2d3748;
+  --color-top-section-border: #4a5568;
 
   /* Badge & Checkbox Colors */
   --color-badge-bg: #f3f4f6;
@@ -92,6 +96,10 @@
   --color-surface-bg: #111111;
   --color-surface-border: #262626;
 
+  /* Top Section Gamification Colors */
+  --color-top-section-bg: #2d3748;
+  --color-top-section-border: #4a5568;
+
   /* Badge & Checkbox Colors */
   --color-badge-bg: #262626;
   /* neutral-800 */
@@ -163,6 +171,9 @@
 
   --color-surface-bg: var(--color-surface-bg);
   --color-surface-border: var(--color-surface-border);
+
+  --color-top-section-bg: var(--color-top-section-bg);
+  --color-top-section-border: var(--color-top-section-border);
 
   --color-badge-bg: var(--color-badge-bg);
   --color-badge-text: var(--color-badge-text);

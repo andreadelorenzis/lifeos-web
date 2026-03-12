@@ -4,7 +4,7 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 import TaskList from "./TaskList.vue";
 import GoalList from "./GoalList.vue";
 import PomodoroTimer from "./PomodoroTimer.vue";
-import { ListChecks } from "lucide-vue-next";
+import { ListChecks, Rocket, Sword } from "lucide-vue-next";
 import { Target, Flag, LineChart } from "lucide-vue-next";
 import { taskModalStore } from "@/stores/TaskModalStore";
 import { watch } from "vue";
@@ -15,6 +15,7 @@ const categories = ref([
   { name: "Focus", id: 2, icon: Target },
   { name: "Goals", id: 3, icon: Flag },
   { name: "Dashboard", id: 4, icon: LineChart },
+  { name: "Motivation", id: 5, icon: Sword },
 ]);
 
 const selectedIndex = ref(0);
@@ -71,6 +72,9 @@ watch(
         </div>
         <div v-if="category.id === 4">
           <Dashboard />
+        </div>
+        <div v-if="category.id === 5">
+          <Motivation />
         </div>
       </TabPanel>
     </TabPanels>
