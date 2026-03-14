@@ -40,14 +40,24 @@ export class Game {
 
   async loadAssets() {
     return {
+      tilemapColor1: await Assets.load(
+        "/sprites/terrain/tileset/Tilemap_color1.json",
+      ),
       chestSheet: await Assets.load("/sprites/chests/chests_animate.json"),
       avatarSheet: await Assets.load("/sprites/avatar/character.json"),
       particleTex: await Assets.load("/sprites/particles/star_04.png"),
       charIdle: await Assets.load("/sprites/characters/idle.json"),
       charRun: await Assets.load("/sprites/characters/run.json"),
       charAttack: await Assets.load("/sprites/characters/attack.json"),
-      tilemapColor1: await Assets.load(
-        "/sprites/terrain/tileset/Tilemap_color1.json",
+      charHit: await Assets.load("/sprites/characters/hit.png"),
+      blackLancherIdle: await Assets.load(
+        "/sprites/units/Black Units/Lancer/Lancer_Idle.json",
+      ),
+      blackLancherRightAttack: await Assets.load(
+        "/sprites/units/Black Units/Lancer/Lancer_Right_Attack.json",
+      ),
+      blackLancherRun: await Assets.load(
+        "/sprites/units/Black Units/Lancer/Lancer_Run.json",
       ),
     };
   }

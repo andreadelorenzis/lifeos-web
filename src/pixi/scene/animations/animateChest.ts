@@ -5,13 +5,13 @@ import {
   type Texture,
 } from "pixi.js";
 import { gsap } from "gsap/gsap-core";
-import { Chest } from "../../entities/items/Chest";
+import { Chest } from "@/pixi/items/Chest";
 
 export function animateChest(
   app: Application,
   chest: Chest,
   container: Container,
-  particleTex: Texture
+  particleTex: Texture,
 ): Promise<void> {
   return new Promise((resolve) => {
     // Create dark overlay to cover everything and block clicks

@@ -10,7 +10,7 @@ import {
   type Ticker,
 } from "pixi.js";
 import { gsap } from "gsap/gsap-core";
-import { Entity } from "../Entity";
+import { Entity } from "../entities/Entity";
 
 export class Chest extends Entity {
   constructor(x: number, y: number, animations: Record<string, any>) {

@@ -29,7 +29,11 @@ export function createTopSection(
   // Status info layout calculations
   const statusHeight = 95;
   const statusY = avatarRadius * 2 - statusHeight - 5;
-  const rectWidth = screenWidth - avatarWidth / 2 - 20;
+  const maxStatusWidth = 500;
+  const rectWidth = Math.min(
+    screenWidth - avatarWidth / 2 - 20,
+    maxStatusWidth,
+  );
   const skewOffset = Math.tan((30 * Math.PI) / 180) * statusHeight;
 
   // Polygon points for the status rectangle, skewed on the right
@@ -116,7 +120,7 @@ export function createTopSection(
 
   // Status Info Container
   const statusContainer = new Container();
-  statusContainer.x = avatarWidth;
+  statusContainer.x = avatarWidth / 2 + avatarRadius + 20; // Some left padding after circle
   statusContainer.y = statusY; // Shifted down
 
   const textStyle = new TextStyle({
@@ -133,9 +137,13 @@ export function createTopSection(
   combinedText.y = 10;
 
   const barHeight = 18;
+  const availableBarWidth = Math.max(
+    rectWidth - (statusContainer.x - avatarWidth / 2) - skewOffset - 20,
+    100,
+  );
 
   // Exp Bar
-  const expBarWidth = screenWidth * 0.65 - 50;
+  const expBarWidth = availableBarWidth;
   const expBarBg = new Graphics();
   expBarBg.roundRect(0, 36, expBarWidth, barHeight, 8);
   expBarBg.fill({ color: 0x595757 });
@@ -157,7 +165,7 @@ export function createTopSection(
   expText.y = 37.5;
 
   // Health Bar
-  const healthBarWidth = expBarWidth * 0.85;
+  const healthBarWidth = availableBarWidth * 0.85;
   const healthBarBg = new Graphics();
   healthBarBg.roundRect(0, 62, healthBarWidth, barHeight, 8);
   healthBarBg.fill({ color: 0x595757 });

@@ -9,7 +9,7 @@ import {
 import { themeManager } from "@/pixi/theme/themeManager";
 import { animateChest } from "../animations/animateChest";
 import { gsap } from "gsap/gsap-core";
-import { Chest } from "../../entities/items/Chest";
+import { Chest } from "@/pixi/items/Chest";
 
 interface ChestData {
   id: number;
@@ -33,7 +33,10 @@ export function createChestSection(
   bottomSection.y = screenHeight - 140;
 
   const maxSlots = 4;
-  const spacing = screenWidth / (maxSlots + 1);
+  const maxChestAreaWidth = 600;
+  const chestAreaWidth = Math.min(screenWidth, maxChestAreaWidth);
+  const spacing = chestAreaWidth / (maxSlots + 1);
+  const offsetX = (screenWidth - chestAreaWidth) / 2;
 
   for (let i = 0; i < maxSlots; i++) {
     const chestData = chestsData[i] || null;
@@ -85,7 +88,7 @@ export function createChestSection(
     }
     boxStroke.tint = darkBorderColor;
 
-    boxContainer.x = spacing * (i + 1);
+    boxContainer.x = offsetX + spacing * (i + 1);
     boxContainer.y = 50;
     bottomSection.addChild(boxContainer);
 
@@ -135,12 +138,7 @@ export function createChestSection(
         boxContainer.on("pointerup", async (event) => {
           console.log("Clicked at:", event.global.x, event.global.y);
           labelText.destroy();
-          await animateChest(
-            app,
-            chest,
-            bottomSection,
-            assets.particleTex
-          );
+          await animateChest(app, chest, bottomSection, assets.particleTex);
 
           // Set the chest slot to null
           const index = chestsData.findIndex((c) => c?.id === chestData.id);

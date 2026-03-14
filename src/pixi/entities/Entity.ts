@@ -1,5 +1,12 @@
 import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js";
 
+export enum State {
+  Idle,
+  Run,
+  Attack,
+  Cooldown,
+}
+
 export class Entity extends Container {
   protected sprite: Sprite | AnimatedSprite;
   protected animations?: Record<string, any>;
@@ -36,7 +43,7 @@ export class Entity extends Container {
     if (this.sprite.textures === anim && !onComplete) return;
 
     this.sprite.textures = anim;
-    this.sprite.loop = false;
+    this.sprite.loop = !onComplete;
 
     if (onComplete) {
       this.sprite.onComplete = undefined;
