@@ -1,0 +1,94 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 49,
+        "h": 49
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 49,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 49,
+        "h": 49
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 98,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 49,
+        "h": 49
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 147,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 49,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 49,
+        "h": 49
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "Sheep_Move.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 196,
+      "h": 49
+    },
+    "scale": "1"
+  }
+}

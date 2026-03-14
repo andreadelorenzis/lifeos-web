@@ -18,6 +18,9 @@ export interface Goal {
   statusId: number;
   statusName: string;
   createdAt: Date;
+  start?: string;
+  end?: string;
+  progress?: number;
 }
 
 export interface BurndownPoint {

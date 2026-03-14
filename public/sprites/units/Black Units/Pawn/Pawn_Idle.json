@@ -1,0 +1,174 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 55,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 110,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 165,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_004": {
+      "frame": {
+        "x": 0,
+        "y": 76,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_005": {
+      "frame": {
+        "x": 55,
+        "y": 76,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_006": {
+      "frame": {
+        "x": 110,
+        "y": 76,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    },
+    "frame_007": {
+      "frame": {
+        "x": 165,
+        "y": 76,
+        "w": 55,
+        "h": 76
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 55,
+        "h": 76
+      },
+      "sourceSize": {
+        "w": 55,
+        "h": 76
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "Pawn_Idle.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 220,
+      "h": 152
+    },
+    "scale": "1"
+  }
+}

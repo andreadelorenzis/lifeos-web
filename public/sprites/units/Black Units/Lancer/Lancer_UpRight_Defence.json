@@ -1,0 +1,134 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 92
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 112,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 92
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 224,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 92
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 336,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 92
+      }
+    },
+    "frame_004": {
+      "frame": {
+        "x": 0,
+        "y": 92,
+        "w": 112,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 92
+      }
+    },
+    "frame_005": {
+      "frame": {
+        "x": 112,
+        "y": 92,
+        "w": 112,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 112,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 92
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "Lancer_UpRight_Defence.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 448,
+      "h": 184
+    },
+    "scale": "1"
+  }
+}

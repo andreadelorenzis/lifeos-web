@@ -1,0 +1,134 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 60,
+        "h": 54
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 60,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 60,
+        "h": 54
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 120,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 60,
+        "h": 54
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 180,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 60,
+        "h": 54
+      }
+    },
+    "frame_004": {
+      "frame": {
+        "x": 0,
+        "y": 54,
+        "w": 60,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 60,
+        "h": 54
+      }
+    },
+    "frame_005": {
+      "frame": {
+        "x": 60,
+        "y": 54,
+        "w": 60,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 60,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 60,
+        "h": 54
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "Gold Stone 3_Highlight.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 240,
+      "h": 108
+    },
+    "scale": "1"
+  }
+}

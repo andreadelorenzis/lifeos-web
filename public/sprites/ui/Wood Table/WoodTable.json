@@ -1,0 +1,194 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 86,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 172,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 258,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_004": {
+      "frame": {
+        "x": 0,
+        "y": 105,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_005": {
+      "frame": {
+        "x": 86,
+        "y": 105,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_006": {
+      "frame": {
+        "x": 172,
+        "y": 105,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_007": {
+      "frame": {
+        "x": 258,
+        "y": 105,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    },
+    "frame_008": {
+      "frame": {
+        "x": 0,
+        "y": 210,
+        "w": 86,
+        "h": 105
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 86,
+        "h": 105
+      },
+      "sourceSize": {
+        "w": 86,
+        "h": 105
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "WoodTable.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 344,
+      "h": 315
+    },
+    "scale": "1"
+  }
+}

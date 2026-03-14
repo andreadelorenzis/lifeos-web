@@ -116,32 +116,22 @@ const { data: ganttGoals } = useQuery({
   },
 });
 
+const ganttTasks = computed(() => {
+  if (!ganttGoals.value) return [];
+  return ganttGoals.value;
+});
+
 const tasks = computed(() => {
   if (!ganttGoals.value) return [];
   return ganttGoals.value.map((goal) => {
-    // protect against negative progress visually in the gantt
-    let progressPercentage = 0;
-    if (goal.targetQuantity > 0) {
-      progressPercentage = Math.max(
-        0,
-        Math.min(100, (goal.currentProgress / goal.targetQuantity) * 100),
-      );
-    }
-
-    // frappe-gantt expects YYYY-MM-DD
-    const start = (goal.createdAt ? new Date(goal.createdAt) : new Date())
-      .toISOString()
-      .split("T")[0];
-    const end = (goal.deadline ? new Date(goal.deadline) : new Date())
-      .toISOString()
-      .split("T")[0];
-
+    const start = goal.start;
+    const end = goal.end;
     return {
       id: String(goal.id),
       name: goal.name,
       start,
       end,
-      progress: progressPercentage,
+      progress: goal.progress,
     };
   });
 });
@@ -171,7 +161,7 @@ const handleClick = (task: any) => {
     <div>
       <h2 class="text-neutral-700 font-medium text-lg mb-2">Goal Gantt</h2>
       <FrappeGantt
-        v-if="tasks.length > 0"
+        v-if="ganttTasks.length > 0"
         :tasks="tasks"
         :options="{ view_mode: 'Month' }"
         @taskClick="handleClick"

@@ -1,0 +1,94 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 73
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 84,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 73
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 168,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 73
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 252,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 84,
+        "h": 73
+      },
+      "sourceSize": {
+        "w": 84,
+        "h": 73
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "Run.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 336,
+      "h": 73
+    },
+    "scale": "1"
+  }
+}

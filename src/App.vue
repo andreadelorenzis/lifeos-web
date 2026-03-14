@@ -41,10 +41,12 @@ const { isDark, toggleDark } = useTheme();
   min-width: 0;
   border-right: 2px solid var(--color-neutral-500);
   padding: 0 20px;
+
+  display: none;
 }
 
 .gamification-container {
-  width: 50%;
+  width: 100%;
   min-width: 0;
 }
 

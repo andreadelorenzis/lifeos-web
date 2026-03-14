@@ -1,0 +1,254 @@
+{
+  "frames": {
+    "frame_000": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_001": {
+      "frame": {
+        "x": 74,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_002": {
+      "frame": {
+        "x": 148,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_003": {
+      "frame": {
+        "x": 222,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_004": {
+      "frame": {
+        "x": 0,
+        "y": 152,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_005": {
+      "frame": {
+        "x": 74,
+        "y": 152,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_006": {
+      "frame": {
+        "x": 148,
+        "y": 152,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_007": {
+      "frame": {
+        "x": 222,
+        "y": 152,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_008": {
+      "frame": {
+        "x": 0,
+        "y": 304,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_009": {
+      "frame": {
+        "x": 74,
+        "y": 304,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_010": {
+      "frame": {
+        "x": 148,
+        "y": 304,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    },
+    "frame_011": {
+      "frame": {
+        "x": 222,
+        "y": 304,
+        "w": 74,
+        "h": 152
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 74,
+        "h": 152
+      },
+      "sourceSize": {
+        "w": 74,
+        "h": 152
+      }
+    }
+  },
+  "meta": {
+    "app": "spritesheetgen",
+    "image": "Lancer_Idle.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 296,
+      "h": 456
+    },
+    "scale": "1"
+  }
+}

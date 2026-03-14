@@ -32,6 +32,9 @@ export async function createPixiApp(container: HTMLElement) {
     charIdle: await Assets.load("/sprites/characters/idle.json"),
     charRun: await Assets.load("/sprites/characters/run.json"),
     charAttack: await Assets.load("/sprites/characters/attack.json"),
+    tilemapColor1: await Assets.load(
+      "/sprites/terrain/tileset/Tilemap_color1.json",
+    ),
   };
 
   const scene = buildScene(app, container, assets);
