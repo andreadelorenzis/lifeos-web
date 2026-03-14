@@ -9,6 +9,7 @@ import {
 import { themeManager } from "@/pixi/theme/themeManager";
 import { animateChest } from "../animations/animateChest";
 import { gsap } from "gsap/gsap-core";
+import { Chest } from "../../entities/items/Chest";
 
 interface ChestData {
   id: number;
@@ -64,7 +65,7 @@ export function createChestSection(
 
     // Box coloring
     let isUnlocked = chestData && !chestData.locked;
-    
+
     // Hardcoded Dark Mode Colors
     const darkPrimaryBg = 0x3b82f6;
     const darkPrimaryBgHover = 0x1d4ed8;
@@ -114,10 +115,18 @@ export function createChestSection(
       };
       const rIdx = rarityMap[chestData.rarity] ?? 0;
 
-      const chest = new Sprite(assets.chestSheet.textures[`chest_${rIdx}_0`]);
-      chest.anchor.set(0.5);
-      chest.x = boxContainer.x;
-      chest.y = boxContainer.y;
+      const idleTextures = [assets.chestSheet.textures[`chest_${rIdx}_0`]];
+      const openTextures = [
+        assets.chestSheet.textures[`chest_${rIdx}_0`],
+        assets.chestSheet.textures[`chest_${rIdx}_1`],
+        assets.chestSheet.textures[`chest_${rIdx}_2`],
+        assets.chestSheet.textures[`chest_${rIdx}_3`],
+      ];
+
+      const chest = new Chest(boxContainer.x, boxContainer.y, {
+        idle: idleTextures,
+        open: openTextures,
+      });
       chest.scale.set(3);
       bottomSection.addChild(chest);
 
@@ -130,9 +139,7 @@ export function createChestSection(
             app,
             chest,
             bottomSection,
-            assets.chestSheet,
-            assets.particleTex,
-            chestData,
+            assets.particleTex
           );
 
           // Set the chest slot to null
