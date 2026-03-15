@@ -7,14 +7,18 @@ export enum State {
   Cooldown,
 }
 
+export type AnimationMap = {
+  idle: Texture[];
+} & Record<string, Texture[]>;
+
 export class Entity extends Container {
-  protected sprite: Sprite | AnimatedSprite;
-  protected animations?: Record<string, any>;
+  sprite: Sprite | AnimatedSprite;
+  protected animations?: Record<string, Texture[]>;
 
   constructor(
     x: number,
     y: number,
-    options: { animations?: Record<string, any>; texture?: Texture },
+    options: { animations?: AnimationMap; texture?: Texture },
   ) {
     super();
     this.x = x;
@@ -22,9 +26,11 @@ export class Entity extends Container {
 
     if (options.animations) {
       this.animations = options.animations;
-      this.sprite = new AnimatedSprite(this.animations.idle!);
-      (this.sprite as AnimatedSprite).animationSpeed = 0.15;
-      (this.sprite as AnimatedSprite).play();
+      const idleFrames = options.animations.idle;
+      const sprite = new AnimatedSprite(idleFrames);
+      sprite.animationSpeed = 0.15;
+      sprite.play();
+      this.sprite = sprite;
     } else if (options.texture) {
       this.sprite = new Sprite(options.texture);
     } else {

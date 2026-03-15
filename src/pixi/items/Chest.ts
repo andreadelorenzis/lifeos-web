@@ -10,10 +10,10 @@ import {
   type Ticker,
 } from "pixi.js";
 import { gsap } from "gsap/gsap-core";
-import { Entity } from "../entities/Entity";
+import { Entity, type AnimationMap } from "../entities/Entity";
 
 export class Chest extends Entity {
-  constructor(x: number, y: number, animations: Record<string, any>) {
+  constructor(x: number, y: number, animations: AnimationMap) {
     super(x, y, { animations });
   }
 
@@ -33,6 +33,10 @@ export class Chest extends Entity {
         return;
       }
 
+      if (!this.animations) {
+        return;
+      }
+
       // 1. Create the item coming out (small circle)
       const item = new Graphics();
       item.circle(0, 0, 25);
@@ -43,7 +47,7 @@ export class Chest extends Entity {
       parent.addChild(item);
 
       // 2. Create the front part of the chest
-      const openAnim = this.animations?.open;
+      const openAnim = this.animations.open || [];
       const frontChest = new Sprite(openAnim[openAnim.length - 1]);
       frontChest.anchor.set(0.5);
       frontChest.x = this.x;

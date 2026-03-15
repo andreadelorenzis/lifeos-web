@@ -49,6 +49,8 @@ export class Game {
       charIdle: await Assets.load("/sprites/characters/idle.json"),
       charRun: await Assets.load("/sprites/characters/run.json"),
       charAttack: await Assets.load("/sprites/characters/attack.json"),
+      charDeath: await Assets.load("/sprites/characters/_DeathNoMovement.json"),
+      charDeathWithMove: await Assets.load("/sprites/characters/_Death.json"),
       charHit: await Assets.load("/sprites/characters/hit.png"),
       blackLancherIdle: await Assets.load(
         "/sprites/units/Black Units/Lancer/Lancer_Idle.json",

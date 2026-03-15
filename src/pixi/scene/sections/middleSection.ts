@@ -6,7 +6,7 @@ import {
   Sprite,
 } from "pixi.js";
 import { gsap } from "gsap/gsap-core";
-import { Player } from "@/pixi/actors/Player";
+import { Player } from "@/pixi/entities/actors/Player";
 import { Terrain } from "../terrain/Terrain";
 
 // --- Main World Section ---

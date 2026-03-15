@@ -1,11 +1,11 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, Texture } from "pixi.js";
 import { createTopSection } from "./sections/topSection";
 import { createChestSection } from "./sections/chestSection";
 import { themeManager } from "../theme/themeManager";
 import { createMiddleSection } from "./sections/middleSection";
-import { Player } from "../actors/Player";
+import { Player } from "../entities/actors/Player";
 import { Controls } from "../input/Controls";
-import { Enemy } from "../actors/Enemy";
+import { Enemy } from "../entities/actors/Enemy";
 import { State } from "../entities/Entity";
 
 interface ChestData {
@@ -60,10 +60,22 @@ export class Scene {
     );
 
     // Playable character
-    const playerRunFrames = Object.values(this.assets.charRun.textures);
-    const playerAttackFrames = Object.values(this.assets.charAttack.textures);
-    const playerIdleFrames = Object.values(this.assets.charIdle.textures);
-    const playerHitFrames = [this.assets.charHit];
+    const playerRunFrames: Texture[] = Object.values(
+      this.assets.charRun.textures,
+    );
+    const playerAttackFrames: Texture[] = Object.values(
+      this.assets.charAttack.textures,
+    );
+    const playerIdleFrames: Texture[] = Object.values(
+      this.assets.charIdle.textures,
+    );
+    const playerHitFrames: Texture[] = [this.assets.charHit];
+    const playerDeath: Texture[] = Object.values(
+      this.assets.charDeath.textures,
+    );
+    const playerDeathWithMove: Texture[] = Object.values(
+      this.assets.charDeathWithMove.textures,
+    );
 
     this.player = new Player(
       this.app.screen.width / 2,
@@ -73,17 +85,21 @@ export class Scene {
         attack: playerAttackFrames,
         run: playerRunFrames,
         hit: playerHitFrames,
+        death: playerDeath,
+        deathWithMove: playerDeathWithMove,
       },
     );
     this.player.scale = 2;
     this.player.bounds = terrain.getBounds();
 
     // Enemy
-    const enemyRunFrames = Object.values(this.assets.blackLancherRun.textures);
-    const enemyAttackFrames = Object.values(
+    const enemyRunFrames: Texture[] = Object.values(
+      this.assets.blackLancherRun.textures,
+    );
+    const enemyAttackFrames: Texture[] = Object.values(
       this.assets.blackLancherRightAttack.textures,
     );
-    const enemyIdleFrames = Object.values(
+    const enemyIdleFrames: Texture[] = Object.values(
       this.assets.blackLancherIdle.textures,
     );
     const enemy = new Enemy(
@@ -116,28 +132,23 @@ export class Scene {
     }
 
     for (const enemy of this.enemies) {
-      // Just visually update animations based on an 'idle' input
-      enemy.update(dt, {
-        horizontal: 0,
-        vertical: 0,
-        attack: false,
-      } as unknown as Controls);
+      enemy.update(dt);
 
       // Collision detection with player
-      if (this.player) {
+      if (this.player && !this.player.health.isDead()) {
         const dx = this.player.x - enemy.x;
         const dy = this.player.y - enemy.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < 40) {
           // 40px collision radius
-          this.player.takeDamage(35);
-          this.player.knockback(enemy.x, enemy.y);
+          this.player.health.takeDamage(35);
+          this.player.knockbackFrom(enemy.x, enemy.y);
         }
 
         if (dist < 80 && this.player.state === State.Attack) {
-          enemy.takeDamage(35);
-          enemy.knockback(this.player.x, this.player.y);
+          enemy.health.takeDamage(35);
+          enemy.knockbackFrom(this.player.x, this.player.y);
         }
       }
     }
